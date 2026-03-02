@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from "react-router";
+import { createBrowserRouter, Outlet, useLocation } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
 import { Shorts } from "./pages/Shorts";
@@ -9,10 +9,20 @@ import { Account } from "./pages/Account";
 import { Downloads } from "./pages/Downloads";
 import { PrototypeProvider } from "./context/PrototypeContext";
 import { PrototypeSwitcher } from "./components/PrototypeSwitcher";
+import { useEffect } from "react";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function Root() {
   return (
     <PrototypeProvider>
+      <ScrollToTop />
       <Outlet />
       <PrototypeSwitcher />
     </PrototypeProvider>
