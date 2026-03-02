@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router";
 import {
   ChevronLeft,
@@ -25,25 +25,25 @@ export function Player() {
   const movie = MOCK_MOVIES.find((m) => m.id === id) || MOCK_MOVIES[0];
   const { hasAdsDelay, variant } = usePrototype();
 
-  // Total ads to show (like "Ad 1 of 6")
-  const totalAds = useMemo(() => Math.floor(Math.random() * 4) + 3, []); // 3-6 ads
-  const [currentAdIndex, setCurrentAdIndex] = useState(1);
+  // Video refs
+  const adVideoRef = useRef<HTMLVideoElement>(null);
+  const contentVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Pick a random ad from the database
-  const currentAd = useMemo(
-    () => AD_VIDEOS[Math.floor(Math.random() * AD_VIDEOS.length)],
-    []
-  );
+  // ---- Ad queue: all 3 ads must be watched ----
+  const totalAds = AD_VIDEOS.length; // Always 3
+  const [currentAdIndex, setCurrentAdIndex] = useState(0); // 0-based index into AD_VIDEOS
+  const currentAd = AD_VIDEOS[currentAdIndex] || AD_VIDEOS[0];
 
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay
   const [contentProgress, setContentProgress] = useState(0);
 
   // ---- Ad state ----
   const [isAd, setIsAd] = useState(true); // Start with ad by default for A & B
-  const [adTimer, setAdTimer] = useState(currentAd.duration);
+  const [adTimer, setAdTimer] = useState(AD_VIDEOS[0].duration);
   const [skipTimer, setSkipTimer] = useState(5);
   const [showSkip, setShowSkip] = useState(false);
-  const [adFinished, setAdFinished] = useState(false);
+  const [allAdsFinished, setAllAdsFinished] = useState(false);
 
   // ---- Variant A & B: Surprise mid-roll ad ----
   const [surpriseDelay] = useState(() => Math.floor(Math.random() * 11) + 8);
@@ -73,6 +73,27 @@ export function Player() {
     }
   }, [hasAdsDelay]);
 
+  // Sync video play/pause with isPlaying state
+  useEffect(() => {
+    const videoEl = isAd ? adVideoRef.current : contentVideoRef.current;
+    if (!videoEl) return;
+    if (isPlaying) {
+      videoEl.play().catch(() => {});
+    } else {
+      videoEl.pause();
+    }
+  }, [isPlaying, isAd]);
+
+  // When switching between ad and content, auto-play the new video
+  useEffect(() => {
+    const videoEl = isAd ? adVideoRef.current : contentVideoRef.current;
+    if (!videoEl) return;
+    videoEl.muted = isMuted;
+    if (isPlaying) {
+      videoEl.play().catch(() => {});
+    }
+  }, [isAd]);
+
   // =============================================
   // Content playback progress
   // =============================================
@@ -85,19 +106,21 @@ export function Player() {
   }, [isPlaying, isAd]);
 
   // =============================================
-  // VARIANT A & B: Surprise mid-roll ad after first ad ends
+  // VARIANT A & B: Surprise mid-roll ad after ALL ads end
   // =============================================
   useEffect(() => {
-    if (hasAdsDelay || surpriseTriggered || isAd || !adFinished) return;
+    if (hasAdsDelay || surpriseTriggered || isAd || !allAdsFinished) return;
     if (!isPlaying) return;
 
     const timer = setTimeout(() => {
       setSurpriseTriggered(true);
+      // Restart from first ad again for mid-roll
+      setCurrentAdIndex(0);
       setIsAd(true);
-      setAdTimer(currentAd.duration);
+      setAdTimer(AD_VIDEOS[0].duration);
       setSkipTimer(5);
       setShowSkip(false);
-      setCurrentAdIndex((prev) => Math.min(prev + 1, totalAds));
+      setAllAdsFinished(false);
     }, surpriseDelay * 1000);
 
     return () => clearTimeout(timer);
@@ -107,9 +130,7 @@ export function Player() {
     isAd,
     isPlaying,
     surpriseDelay,
-    currentAd.duration,
-    adFinished,
-    totalAds,
+    allAdsFinished,
   ]);
 
   // =============================================
@@ -122,8 +143,9 @@ export function Player() {
       setAdPromptTimer((prev) => {
         if (prev <= 1) {
           setShowAdPrompt(false);
+          setCurrentAdIndex(0);
           setIsAd(true);
-          setAdTimer(currentAd.duration);
+          setAdTimer(AD_VIDEOS[0].duration);
           setSkipTimer(5);
           setShowSkip(false);
           return 0;
@@ -132,14 +154,33 @@ export function Player() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [hasAdsDelay, showAdPrompt, isAd, isPlaying, currentAd.duration]);
+  }, [hasAdsDelay, showAdPrompt, isAd, isPlaying]);
 
   const handleWatchAdNow = () => {
     setShowAdPrompt(false);
+    setCurrentAdIndex(0);
     setIsAd(true);
-    setAdTimer(currentAd.duration);
+    setAdTimer(AD_VIDEOS[0].duration);
     setSkipTimer(5);
     setShowSkip(false);
+  };
+
+  // =============================================
+  // Move to next ad or finish all ads
+  // =============================================
+  const advanceToNextAdOrFinish = () => {
+    const nextIndex = currentAdIndex + 1;
+    if (nextIndex < totalAds) {
+      // Move to next ad
+      setCurrentAdIndex(nextIndex);
+      setAdTimer(AD_VIDEOS[nextIndex].duration);
+      setSkipTimer(5);
+      setShowSkip(false);
+    } else {
+      // All ads done
+      setIsAd(false);
+      setAllAdsFinished(true);
+    }
   };
 
   // =============================================
@@ -150,8 +191,7 @@ export function Player() {
     const interval = setInterval(() => {
       setAdTimer((prev) => {
         if (prev <= 1) {
-          setIsAd(false);
-          setAdFinished(true);
+          advanceToNextAdOrFinish();
           return 0;
         }
         return prev - 1;
@@ -165,11 +205,11 @@ export function Player() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [isPlaying, isAd]);
+  }, [isPlaying, isAd, currentAdIndex]);
 
   const handleSkip = () => {
-    setIsAd(false);
-    setAdFinished(true);
+    // Skip just moves to next ad, doesn't skip all
+    advanceToNextAdOrFinish();
   };
 
   const adElapsed = currentAd.duration - adTimer;
@@ -183,11 +223,19 @@ export function Player() {
       <div className="relative w-full aspect-video bg-black">
         {/* Video / Ad content */}
         {isAd ? (
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/40 to-orange-900/30 flex flex-col items-center justify-center">
+          <div className="absolute inset-0">
             {currentAd.url ? (
-              <span className="text-gray-400 text-sm">Playing ad video...</span>
+              <video
+                ref={adVideoRef}
+                src={currentAd.url}
+                autoPlay
+                muted={isMuted}
+                playsInline
+                loop
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <>
+              <div className="w-full h-full bg-gradient-to-br from-yellow-900/40 to-orange-900/30 flex flex-col items-center justify-center">
                 <img
                   src={movie.poster}
                   alt=""
@@ -201,16 +249,29 @@ export function Player() {
                     {currentAd.brand} — {currentAd.title}
                   </span>
                 </div>
-              </>
+              </div>
             )}
           </div>
         ) : (
           <div className="absolute inset-0">
-            <img
-              src={movie.poster}
-              alt={movie.title}
-              className="w-full h-full object-cover opacity-50"
-            />
+            {movie.videoUrl ? (
+              <video
+                ref={contentVideoRef}
+                src={movie.videoUrl}
+                autoPlay
+                muted={isMuted}
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <>
+                <img
+                  src={movie.poster}
+                  alt={movie.title}
+                  className="w-full h-full object-cover opacity-50"
+                />
+              </>
+            )}
             <div className="absolute inset-0 flex items-center justify-center">
               {!isPlaying && (
                 <button
@@ -239,16 +300,16 @@ export function Player() {
           </button>
         )}
 
-        {/* Variant C: "Video 30" countdown prompt */}
+        {/* Variant C: "Ad coming" countdown prompt — tap to watch ad now */}
         {hasAdsDelay && showAdPrompt && !isAd && (
           <button
             onClick={handleWatchAdNow}
-            className="absolute top-3 right-3 z-30 flex items-center gap-2 bg-[#F5C542]/90 backdrop-blur-sm text-black pl-3 pr-3 py-1.5 rounded-xl shadow-lg hover:bg-[#F5C542] transition cursor-pointer"
+            className="absolute top-3 right-3 z-30 flex items-center gap-0 bg-[#F5C542] backdrop-blur-sm text-black rounded-full shadow-lg hover:bg-[#f0c030] transition cursor-pointer overflow-hidden"
           >
-            <span className="text-xs font-medium">Video</span>
-            <div className="flex items-center gap-1 bg-black/20 rounded-lg px-2 py-0.5">
-              <span className="text-xs font-bold">{adPromptTimer}</span>
-              <Play size={10} fill="black" />
+            <span className="text-[11px] font-medium pl-3 pr-1.5 py-1.5">Ad coming</span>
+            <div className="flex items-center gap-0.5 bg-black/20 rounded-full px-2.5 py-1 mr-0.5 my-0.5">
+              <span className="text-[12px] font-bold">{adPromptTimer}</span>
+              <Play size={10} fill="black" className="ml-0.5" />
             </div>
           </button>
         )}
@@ -256,16 +317,26 @@ export function Player() {
         {/* Ad skip / countdown overlay */}
         {isAd && (
           <div className="absolute top-12 right-3 z-30 flex flex-col items-end gap-2">
-            {showSkip ? (
-              <button
-                onClick={handleSkip}
-                className="bg-white/90 text-black px-4 py-1.5 rounded text-xs flex items-center gap-1.5 font-bold cursor-pointer"
-              >
-                Skip Ad <SkipForward size={12} />
-              </button>
+            {hasAdsDelay ? (
+              /* Variant C: Can skip after 5s — skip goes to next ad */
+              <>
+                {showSkip ? (
+                  <button
+                    onClick={handleSkip}
+                    className="bg-white/90 text-black px-4 py-1.5 rounded text-xs flex items-center gap-1.5 font-bold cursor-pointer"
+                  >
+                    {currentAdIndex < totalAds - 1 ? "Next Ad" : "Skip Ad"} <SkipForward size={12} />
+                  </button>
+                ) : (
+                  <div className="bg-black/50 text-gray-400 px-3 py-1 rounded text-xs border border-gray-600">
+                    Skip in {skipTimer}s
+                  </div>
+                )}
+              </>
             ) : (
+              /* Variant A & B: No skip allowed — just show remaining time */
               <div className="bg-black/50 text-gray-400 px-3 py-1 rounded text-xs border border-gray-600">
-                Skip in {skipTimer}s
+                Ad ends in {adTimer}s
               </div>
             )}
           </div>
@@ -287,7 +358,7 @@ export function Player() {
         {isAd && (
           <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-1.5 flex items-center justify-between z-20">
             <span className="text-[11px] text-gray-300">
-              Ad {currentAdIndex} of {totalAds} ({adTimeStr})
+              Ad {currentAdIndex + 1} of {totalAds} ({adTimeStr})
             </span>
             <button
               onClick={() => setIsPlaying(!isPlaying)}
