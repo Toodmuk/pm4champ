@@ -11,6 +11,10 @@ import {
   Grid3X3,
   ChevronUp,
   SkipForward,
+  Volume2,
+  VolumeX,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 import { MOCK_MOVIES, AD_VIDEOS, type Movie } from "../data/mock";
 import { usePrototype } from "../context/PrototypeContext";
@@ -28,6 +32,8 @@ export function Player() {
   // Video refs
   const adVideoRef = useRef<HTMLVideoElement>(null);
   const contentVideoRef = useRef<HTMLVideoElement>(null);
+  const playerContainerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // ---- Ad queue: all 3 ads must be watched ----
   const totalAds = AD_VIDEOS.length; // Always 3
@@ -212,6 +218,34 @@ export function Player() {
     advanceToNextAdOrFinish();
   };
 
+  // Sync muted state to active video element
+  const toggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    if (adVideoRef.current) adVideoRef.current.muted = newMuted;
+    if (contentVideoRef.current) contentVideoRef.current.muted = newMuted;
+  };
+
+  // Fullscreen toggle
+  const toggleFullscreen = () => {
+    const container = playerContainerRef.current;
+    if (!container) return;
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+    }
+  };
+
+  // Listen for fullscreen change (e.g. user presses Esc)
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
   const adElapsed = currentAd.duration - adTimer;
   const adTimeStr = `${String(Math.floor(adElapsed / 60)).padStart(2, "0")}:${String(adElapsed % 60).padStart(2, "0")}`;
 
@@ -220,7 +254,7 @@ export function Player() {
       {/* ============================================ */}
       {/* VIDEO PLAYER AREA */}
       {/* ============================================ */}
-      <div className="relative w-full aspect-video bg-black">
+      <div className="relative w-full aspect-video bg-black" ref={playerContainerRef}>
         {/* Video / Ad content */}
         {isAd ? (
           <div className="absolute inset-0">
@@ -357,23 +391,41 @@ export function Player() {
         {/* Ad indicator bar at bottom */}
         {isAd && (
           <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-1.5 flex items-center justify-between z-20">
-            <span className="text-[11px] text-gray-300">
-              Ad {currentAdIndex + 1} of {totalAds} ({adTimeStr})
-            </span>
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="p-0.5"
-            >
-              {isPlaying ? (
-                <Pause size={14} className="text-gray-300" />
-              ) : (
-                <Play size={14} fill="white" className="text-gray-300" />
-              )}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="p-0.5"
+              >
+                {isPlaying ? (
+                  <Pause size={14} className="text-gray-300" />
+                ) : (
+                  <Play size={14} fill="white" className="text-gray-300" />
+                )}
+              </button>
+              <span className="text-[11px] text-gray-300">
+                Ad {currentAdIndex + 1} of {totalAds} ({adTimeStr})
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={toggleMute} className="p-0.5">
+                {isMuted ? (
+                  <VolumeX size={14} className="text-gray-300" />
+                ) : (
+                  <Volume2 size={14} className="text-gray-300" />
+                )}
+              </button>
+              <button onClick={toggleFullscreen} className="p-0.5">
+                {isFullscreen ? (
+                  <Minimize size={14} className="text-gray-300" />
+                ) : (
+                  <Maximize size={14} className="text-gray-300" />
+                )}
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Content time bar at bottom (when not ad) */}
+        {/* Content controls bar at bottom (when not ad) */}
         {!isAd && (
           <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-1.5 flex items-center justify-between z-20">
             <div className="flex items-center gap-2">
@@ -385,6 +437,22 @@ export function Player() {
                 )}
               </button>
               <span className="text-[11px] text-gray-400">12:34 / 45:00</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={toggleMute} className="p-0.5">
+                {isMuted ? (
+                  <VolumeX size={14} className="text-gray-300" />
+                ) : (
+                  <Volume2 size={14} className="text-gray-300" />
+                )}
+              </button>
+              <button onClick={toggleFullscreen} className="p-0.5">
+                {isFullscreen ? (
+                  <Minimize size={14} className="text-gray-300" />
+                ) : (
+                  <Maximize size={14} className="text-gray-300" />
+                )}
+              </button>
             </div>
           </div>
         )}
