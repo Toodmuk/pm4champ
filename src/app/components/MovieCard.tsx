@@ -2,6 +2,7 @@
 import { Movie } from "../data/mock";
 import { Link } from "react-router";
 import { Play } from "lucide-react";
+import { usePrototype } from "../context/PrototypeContext";
 
 interface MovieCardProps {
   movie: Movie;
@@ -10,13 +11,17 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, variant = "poster", rank }: MovieCardProps) {
+  const { hasPreview } = usePrototype();
   const isPoster = variant === "poster";
   const isTop10 = variant === "top10";
   const isWide = variant === "wide";
 
+  // Variant B → Preview page, Variants A & C → Player directly
+  const destination = hasPreview ? `/details/${movie.id}` : `/player/${movie.id}`;
+
   if (isTop10 && rank !== undefined) {
     return (
-      <Link to={`/details/${movie.id}`} className="group relative block">
+      <Link to={destination} className="group relative block">
         <div className="flex items-end">
           <span
             className="text-[100px] md:text-[120px] font-black text-transparent leading-none select-none shrink-0"
@@ -43,7 +48,7 @@ export function MovieCard({ movie, variant = "poster", rank }: MovieCardProps) {
 
   if (isWide) {
     return (
-      <Link to={`/details/${movie.id}`} className="group relative block">
+      <Link to={destination} className="group relative block">
         <div className="aspect-[16/9] overflow-hidden rounded-lg bg-gray-800 relative">
           <img
             src={movie.thumbnail}
@@ -72,7 +77,7 @@ export function MovieCard({ movie, variant = "poster", rank }: MovieCardProps) {
   const aspectRatio = isPoster ? "aspect-[2/3]" : "aspect-[16/9]";
 
   return (
-    <Link to={`/details/${movie.id}`} className="group relative block transition-transform duration-300 hover:scale-105">
+    <Link to={destination} className="group relative block transition-transform duration-300 hover:scale-105">
       <div className={`overflow-hidden rounded-lg bg-gray-800 ${aspectRatio} relative`}>
         <img
           src={isPoster ? movie.poster : movie.thumbnail}

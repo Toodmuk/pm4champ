@@ -1,4 +1,3 @@
-
 export interface Movie {
   id: string;
   title: string;
@@ -15,6 +14,11 @@ export interface Movie {
   season?: number;
   totalEpisodes?: number;
   language?: string;
+  // ============================================
+  // 📹 VIDEO FIELDS — Set your URLs here!
+  // ============================================
+  videoUrl?: string | null;    // Main content video (for Player)
+  trailerUrl?: string | null;  // Preview trailer (for Details page hero)
 }
 
 export interface Episode {
@@ -24,22 +28,52 @@ export interface Episode {
   duration: string;
   thumbnail: string;
   description: string;
+  // 📹 Set episode video URL here
+  videoUrl?: string | null;
 }
 
-export interface Banner {
+// ============================================================
+// 📹 AD VIDEO DATABASE
+// ============================================================
+// Add your ad videos here. The Player will pick from this list.
+// Set url to a real .mp4 link when ready.
+//
+// Examples:
+//   url: "/videos/ad-samsung.mp4"            (local, in /public/videos/)
+//   url: "https://cdn.example.com/ad.mp4"    (external)
+//   url: null                                (shows placeholder)
+// ============================================================
+export interface AdVideo {
   id: string;
-  movieId: string;
-  image: string;
   title: string;
-  subtitle: string;
+  brand: string;
+  url: string | null;
+  duration: number; // seconds
 }
 
-export interface Category {
-  id: string;
-  title: string;
-  items: Movie[];
-  variant?: "poster" | "thumbnail" | "top10" | "wide";
-}
+export const AD_VIDEOS: AdVideo[] = [
+  {
+    id: "ad-1",
+    title: "Premium Upgrade",
+    brand: "VIU Premium",
+    url: null, // ← Replace with: "/videos/ad-viu-premium.mp4"
+    duration: 15,
+  },
+  {
+    id: "ad-2",
+    title: "New Phone Launch",
+    brand: "TechBrand",
+    url: null, // ← Replace with: "/videos/ad-phone.mp4"
+    duration: 15,
+  },
+  {
+    id: "ad-3",
+    title: "Food Delivery Promo",
+    brand: "FoodApp",
+    url: null, // ← Replace with: "/videos/ad-food.mp4"
+    duration: 10,
+  },
+];
 
 const images = [
   "https://images.unsplash.com/photo-1765510296004-614b6cc204da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3ZpZSUyMHBvc3RlciUyMGFjdGlvbnxlbnwxfHx8fDE3NzE1OTIzNTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -77,13 +111,16 @@ export const MOCK_MOVIES: Movie[] = [
     season: 3,
     totalEpisodes: 43,
     language: "ภาษาไทย",
+    // 📹 VIDEO — Replace null with your .mp4 URL
+    videoUrl: null,     // e.g. "/videos/shadow-warrior-main.mp4"
+    trailerUrl: null,   // e.g. "/videos/shadow-warrior-trailer.mp4"
     episodes: [
-      { id: "e1", number: 1, title: "The Awakening", duration: "45 min", thumbnail: images[0], description: "The warrior awakens from a deep slumber to find his world changed." },
-      { id: "e2", number: 2, title: "First Blood", duration: "42 min", thumbnail: images[8], description: "First confrontation with the empire's soldiers." },
-      { id: "e3", number: 3, title: "The Code", duration: "48 min", thumbnail: images[3], description: "Ancient secrets of the warrior code are revealed." },
-      { id: "e4", number: 4, title: "Betrayal", duration: "44 min", thumbnail: images[9], description: "An ally turns against the warrior." },
-      { id: "e5", number: 5, title: "Rising Storm", duration: "46 min", thumbnail: images[13], description: "The final battle approaches." },
-      { id: "e6", number: 6, title: "ครั้งก่อน", duration: "50 min", thumbnail: images[14], description: "ภาพไฮไลต์แสดงให้เห็นตอนจบที่เริ่มออกจากสำนักงานอิสระการรัฐและการ" },
+      { id: "e1", number: 1, title: "The Awakening", duration: "45 min", thumbnail: images[0], description: "The warrior awakens from a deep slumber to find his world changed.", videoUrl: null },
+      { id: "e2", number: 2, title: "First Blood", duration: "42 min", thumbnail: images[8], description: "First confrontation with the empire's soldiers.", videoUrl: null },
+      { id: "e3", number: 3, title: "The Code", duration: "48 min", thumbnail: images[3], description: "Ancient secrets of the warrior code are revealed.", videoUrl: null },
+      { id: "e4", number: 4, title: "Betrayal", duration: "44 min", thumbnail: images[9], description: "An ally turns against the warrior.", videoUrl: null },
+      { id: "e5", number: 5, title: "Rising Storm", duration: "46 min", thumbnail: images[13], description: "The final battle approaches.", videoUrl: null },
+      { id: "e6", number: 6, title: "ครั้งก่อน", duration: "50 min", thumbnail: images[14], description: "ภาพไฮไลต์แสดงให้เห็นตอนจบที่เริ่มออกจากสำนักงานอิสระการรัฐและการ", videoUrl: null },
     ],
   },
   {
@@ -101,9 +138,12 @@ export const MOCK_MOVIES: Movie[] = [
     season: 1,
     totalEpisodes: 16,
     language: "Korean",
+    // 📹 VIDEO
+    videoUrl: null,
+    trailerUrl: null,
     episodes: [
-      { id: "e1", number: 1, title: "The Meeting", duration: "60 min", thumbnail: images[2], description: "Two strangers meet at a bookshop in Gangnam." },
-      { id: "e2", number: 2, title: "Coffee Date", duration: "58 min", thumbnail: images[7], description: "Their first coffee date turns into something unexpected." },
+      { id: "e1", number: 1, title: "The Meeting", duration: "60 min", thumbnail: images[2], description: "Two strangers meet at a bookshop in Gangnam.", videoUrl: null },
+      { id: "e2", number: 2, title: "Coffee Date", duration: "58 min", thumbnail: images[7], description: "Their first coffee date turns into something unexpected.", videoUrl: null },
     ],
   },
   {
@@ -118,6 +158,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "1h 50m",
     cast: ["Enzo Rossi", "Maria Bianchi"],
     tags: ["Premium"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "4",
@@ -131,6 +173,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "1h 45m",
     cast: ["Tom Hardy", "Emily Blunt"],
     tags: ["New"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "5",
@@ -144,6 +188,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "2h 30m",
     cast: ["Chris Pratt", "Zoe Saldana"],
     tags: ["Premium"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "6",
@@ -157,6 +203,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "2h 00m",
     cast: ["Voice Actor A", "Voice Actor B"],
     tags: ["Free"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "7",
@@ -170,6 +218,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "1h 30m",
     cast: ["David Attenborough"],
     tags: ["Free"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "8",
@@ -186,6 +236,9 @@ export const MOCK_MOVIES: Movie[] = [
     season: 1,
     totalEpisodes: 10,
     language: "English",
+    // 📹 VIDEO
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "9",
@@ -199,6 +252,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "8 Episodes",
     cast: ["Various Chefs"],
     tags: ["New Episode"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "10",
@@ -212,6 +267,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "12 Episodes",
     cast: ["Benedict Cumberbatch", "Andrew Scott"],
     tags: ["Premium"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "11",
@@ -225,6 +282,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "1h 30m",
     cast: ["Various Comedians"],
     tags: ["Free", "New"],
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "12",
@@ -240,6 +299,8 @@ export const MOCK_MOVIES: Movie[] = [
     tags: ["Premium", "New Season"],
     season: 2,
     totalEpisodes: 24,
+    videoUrl: null,
+    trailerUrl: null,
   },
   {
     id: "13",
@@ -256,13 +317,16 @@ export const MOCK_MOVIES: Movie[] = [
     season: 3,
     totalEpisodes: 43,
     language: "ภาษาไทย",
+    // 📹 VIDEO
+    videoUrl: null,
+    trailerUrl: null,
     episodes: [
-      { id: "e1", number: 1, title: "ตอนที่ 1", duration: "43 นาที", thumbnail: images[14], description: "จุดเริ่มต้นของเรื่องราว" },
-      { id: "e2", number: 2, title: "ตอนที่ 2", duration: "45 นาที", thumbnail: images[11], description: "เรื่องราวเข้มข้นมากขึ้น" },
-      { id: "e3", number: 3, title: "ตอนที่ 3", duration: "42 นาที", thumbnail: images[3], description: "ความลับเริ่มถูกเปิดเผย" },
-      { id: "e4", number: 4, title: "ตอนที่ 4", duration: "44 นาที", thumbnail: images[9], description: "สถานการณ์ทวีความรุนแรง" },
-      { id: "e5", number: 5, title: "ตอนที่ 5", duration: "46 นาที", thumbnail: images[0], description: "จุดพลิกผันของเรื่อง" },
-      { id: "e6", number: 6, title: "ครั้งก่อน", duration: "50 นาที", thumbnail: images[14], description: "ภาพไฮไลต์แสดงให้เห็นตอนจบที่เริ่มออกจากสำนักงานอิสระการรัฐและการ" },
+      { id: "e1", number: 1, title: "ตอนที่ 1", duration: "43 นาที", thumbnail: images[14], description: "จุดเริ่มต้นของเรื่องราว", videoUrl: null },
+      { id: "e2", number: 2, title: "ตอนที่ 2", duration: "45 นาที", thumbnail: images[11], description: "เรื่องราวเข้มข้นมากขึ้น", videoUrl: null },
+      { id: "e3", number: 3, title: "ตอนที่ 3", duration: "42 นาที", thumbnail: images[3], description: "ความลับเริ่มถูกเปิดเผย", videoUrl: null },
+      { id: "e4", number: 4, title: "ตอนที่ 4", duration: "44 นาที", thumbnail: images[9], description: "สถานการณ์ทวีความรุนแรง", videoUrl: null },
+      { id: "e5", number: 5, title: "ตอนที่ 5", duration: "46 นาที", thumbnail: images[0], description: "จุดพลิกผันของเรื่อง", videoUrl: null },
+      { id: "e6", number: 6, title: "ครั้งก่อน", duration: "50 นาที", thumbnail: images[14], description: "ภาพไฮไลต์แสดงให้เห็นตอนจบที่เริ่มออกจากสำนักงานอิสระการรัฐและการ", videoUrl: null },
     ],
   },
   {
@@ -277,6 +341,8 @@ export const MOCK_MOVIES: Movie[] = [
     duration: "1h 45m",
     cast: ["Florence Pugh", "Milly Alcock"],
     tags: ["New"],
+    videoUrl: null,
+    trailerUrl: null,
   },
 ];
 

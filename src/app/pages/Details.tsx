@@ -1,32 +1,106 @@
-
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
-import { MOCK_MOVIES, MOCK_CATEGORIES } from "../data/mock";
-import { Play, Plus, Share2, ThumbsUp, Download, ChevronDown, ArrowLeft } from "lucide-react";
+import { MOCK_MOVIES } from "../data/mock";
+import {
+  Play,
+  Plus,
+  Share2,
+  ThumbsUp,
+  Download,
+  ChevronDown,
+  ArrowLeft,
+  Volume2,
+  VolumeX,
+  Pause,
+} from "lucide-react";
 
 export function Details() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const movie = MOCK_MOVIES.find((m) => m.id === id) || MOCK_MOVIES[0];
-  const [activeTab, setActiveTab] = useState<"episodes" | "similar" | "details">("episodes");
+  const [activeTab, setActiveTab] = useState<"episodes" | "similar" | "details">(
+    "episodes"
+  );
   const hasEpisodes = movie.episodes && movie.episodes.length > 0;
+
+  // Video preview state
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoMuted, setVideoMuted] = useState(true);
+  const [videoPlaying, setVideoPlaying] = useState(true);
+  const [showVideoFallback, setShowVideoFallback] = useState(true);
 
   // Find similar movies (same genre)
   const similarMovies = MOCK_MOVIES.filter(
     (m) => m.id !== movie.id && m.genre.some((g) => movie.genre.includes(g))
   ).slice(0, 9);
 
+  // 📹 Reads trailerUrl from the movie database in /src/app/data/mock.ts
+  // To add a trailer: set movie.trailerUrl = "/videos/your-trailer.mp4" in mock.ts
+  const previewVideoUrl = movie.trailerUrl || null;
+
+  useEffect(() => {
+    if (previewVideoUrl && videoRef.current) {
+      videoRef.current
+        .play()
+        .then(() => setShowVideoFallback(false))
+        .catch(() => setShowVideoFallback(true));
+    }
+  }, [previewVideoUrl]);
+
+  const toggleVideoPlay = () => {
+    if (!videoRef.current) return;
+    if (videoPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setVideoPlaying(!videoPlaying);
+  };
+
   return (
     <div className="bg-[#141414] min-h-screen pb-24 text-white">
-      {/* Hero Backdrop */}
-      <div className="relative w-full aspect-[16/9] md:aspect-[21/9]">
-        <img
-          src={movie.poster}
-          alt={movie.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/80 via-transparent to-transparent hidden md:block" />
+      {/* Hero Backdrop with Video */}
+      <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden">
+        {/* Video layer (plays when URL is provided) */}
+        {previewVideoUrl ? (
+          <video
+            ref={videoRef}
+            src={previewVideoUrl}
+            muted={videoMuted}
+            autoPlay
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+            onCanPlay={() => setShowVideoFallback(false)}
+            onError={() => setShowVideoFallback(true)}
+          />
+        ) : null}
+
+        {/* Fallback poster image (shown when no video or video failed) */}
+        {(showVideoFallback || !previewVideoUrl) && (
+          <img
+            src={movie.poster}
+            alt={movie.title}
+            className="w-full h-full object-cover absolute inset-0"
+          />
+        )}
+
+        {/* "Video Preview" label — shows instructions when no video URL set */}
+        {!previewVideoUrl && (
+          <div className="absolute inset-0 flex items-center justify-center z-[5]">
+            <div className="bg-black/50 backdrop-blur-sm rounded-2xl px-6 py-4 flex flex-col items-center gap-2 border border-white/10">
+              <Play size={40} className="text-white/60" />
+              <span className="text-white/80 text-sm font-medium">Video Preview</span>
+              <span className="text-white/40 text-xs text-center max-w-[200px]">
+                Set trailerUrl in mock.ts to autoplay a trailer here
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent z-[6]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/80 via-transparent to-transparent hidden md:block z-[6]" />
 
         {/* Back Button */}
         <button
@@ -36,12 +110,37 @@ export function Details() {
           <ArrowLeft size={24} />
         </button>
 
+        {/* Video controls (mute / pause) — only when video is active */}
+        {previewVideoUrl && !showVideoFallback && (
+          <div className="absolute top-4 right-4 md:top-8 md:right-8 z-20 flex items-center gap-2">
+            <button
+              onClick={toggleVideoPlay}
+              className="p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition"
+            >
+              {videoPlaying ? <Pause size={18} /> : <Play size={18} />}
+            </button>
+            <button
+              onClick={() => {
+                setVideoMuted(!videoMuted);
+                if (videoRef.current) videoRef.current.muted = !videoMuted;
+              }}
+              className="p-2 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition"
+            >
+              {videoMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            </button>
+          </div>
+        )}
+
         {/* Content overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-12 z-10">
           {/* Episode info */}
           {movie.season && (
             <div className="flex items-center gap-2 text-sm text-gray-300 mb-2">
-              <span>{movie.season > 1 ? `${movie.season} จาก ${movie.totalEpisodes} นาที` : `${movie.totalEpisodes} Episodes`}</span>
+              <span>
+                {movie.season > 1
+                  ? `ซีซั่น ${movie.season} • ${movie.totalEpisodes} ตอน`
+                  : `${movie.totalEpisodes} Episodes`}
+              </span>
             </div>
           )}
 
@@ -51,9 +150,10 @@ export function Details() {
 
           {/* Meta info */}
           <div className="flex items-center flex-wrap gap-2 text-sm text-gray-300 mb-4">
-            {movie.season && (
+            {movie.season && movie.episodes && movie.episodes.length > 0 && (
               <span className="text-white">
-                ซีซั่น {movie.season}: ตอน {movie.episodes?.length || 0} "{movie.episodes?.[movie.episodes.length - 1]?.title}"
+                ซีซั่น {movie.season}: ตอน {movie.episodes.length} "
+                {movie.episodes[movie.episodes.length - 1]?.title}"
               </span>
             )}
           </div>
@@ -79,13 +179,17 @@ export function Details() {
       <div className="px-4 md:px-12 pt-4">
         {/* Tags row */}
         <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <span className="bg-gray-800 px-2 py-0.5 rounded text-xs font-bold text-white">{movie.rating}</span>
+          <span className="bg-gray-800 px-2 py-0.5 rounded text-xs font-bold text-white">
+            {movie.rating}
+          </span>
           <span className="text-sm text-gray-400">{movie.year}</span>
           {movie.language && (
             <span className="text-sm text-gray-400">{movie.language}</span>
           )}
           {movie.tags.includes("Premium") && (
-            <span className="bg-[#F4BD39] text-black px-2 py-0.5 rounded text-xs font-bold">PREMIUM</span>
+            <span className="bg-[#F4BD39] text-black px-2 py-0.5 rounded text-xs font-bold">
+              PREMIUM
+            </span>
           )}
           {movie.duration && (
             <span className="text-sm text-gray-400">{movie.duration}</span>
@@ -100,7 +204,9 @@ export function Details() {
         {/* Cast */}
         <div className="mb-4">
           <span className="text-xs text-gray-500">ผู้กำกับ: </span>
-          <span className="text-xs text-gray-400">{movie.cast.slice(0, 2).join(", ")}</span>
+          <span className="text-xs text-gray-400">
+            {movie.cast.slice(0, 2).join(", ")}
+          </span>
         </div>
         <div className="mb-6">
           <span className="text-xs text-gray-500">นักแสดง: </span>
@@ -172,7 +278,9 @@ export function Details() {
                   <div className="flex-1 min-w-0 py-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-gray-500 text-sm">{ep.number}.</span>
-                      <span className="text-white text-sm font-medium line-clamp-1">{ep.title}</span>
+                      <span className="text-white text-sm font-medium line-clamp-1">
+                        {ep.title}
+                      </span>
                     </div>
                     <p className="text-gray-500 text-xs line-clamp-2 leading-relaxed">
                       {ep.description}
@@ -194,9 +302,13 @@ export function Details() {
                     alt={m.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  {m.tags.some(t => ["New Episode", "New Season", "New"].includes(t)) && (
+                  {m.tags.some((t) =>
+                    ["New Episode", "New Season", "New"].includes(t)
+                  ) && (
                     <div className="absolute bottom-2 left-2 bg-red-600 px-2 py-0.5 rounded text-[10px] font-bold">
-                      {m.tags.find(t => ["New Episode", "New Season", "New"].includes(t))}
+                      {m.tags.find((t) =>
+                        ["New Episode", "New Season", "New"].includes(t)
+                      )}
                     </div>
                   )}
                 </div>
@@ -209,25 +321,38 @@ export function Details() {
         {activeTab === "details" && (
           <div className="max-w-2xl space-y-4">
             <div>
-              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">เรื่องย่อ</h4>
-              <p className="text-sm text-gray-300 leading-relaxed">{movie.description}</p>
+              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">
+                เรื่องย่อ
+              </h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                {movie.description}
+              </p>
             </div>
             <div>
-              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">นักแสดง</h4>
+              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">
+                นักแสดง
+              </h4>
               <p className="text-sm text-gray-300">{movie.cast.join(", ")}</p>
             </div>
             <div>
-              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">ประเภท</h4>
+              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">
+                ประเภท
+              </h4>
               <div className="flex gap-2 flex-wrap">
                 {movie.genre.map((g) => (
-                  <span key={g} className="bg-gray-800 px-3 py-1 rounded-full text-xs text-gray-300">
+                  <span
+                    key={g}
+                    className="bg-gray-800 px-3 py-1 rounded-full text-xs text-gray-300"
+                  >
                     {g}
                   </span>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">ปี</h4>
+              <h4 className="text-sm font-bold text-gray-400 uppercase mb-2">
+                ปี
+              </h4>
               <p className="text-sm text-gray-300">{movie.year}</p>
             </div>
           </div>
@@ -237,7 +362,13 @@ export function Details() {
   );
 }
 
-function ActionButton({ icon, label }: { icon: React.ReactNode; label: string }) {
+function ActionButton({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
   return (
     <button className="flex flex-col items-center gap-1.5 text-gray-400 hover:text-white transition">
       {icon}
@@ -246,7 +377,15 @@ function ActionButton({ icon, label }: { icon: React.ReactNode; label: string })
   );
 }
 
-function TabButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+function TabButton({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
   return (
     <button
       onClick={onClick}

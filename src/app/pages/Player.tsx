@@ -1,32 +1,129 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
-import { X, Play, Pause, Volume2, VolumeX, SkipForward } from "lucide-react";
-import { MOCK_MOVIES } from "../data/mock";
+import { useState, useEffect, useMemo } from "react";
+import { useParams, useNavigate, Link } from "react-router";
+import {
+  ChevronLeft,
+  Play,
+  Pause,
+  Bookmark,
+  Share2,
+  Info,
+  Download,
+  Grid3X3,
+  ChevronUp,
+  SkipForward,
+} from "lucide-react";
+import { MOCK_MOVIES, AD_VIDEOS, type Movie } from "../data/mock";
+import { usePrototype } from "../context/PrototypeContext";
+
+// Inline banner ad image
+const AD_BANNER_IMAGE =
+  "https://images.unsplash.com/photo-1726979097641-4ed5ba18021c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydHBob25lJTIwYWR2ZXJ0aXNlbWVudCUyMGJhbm5lciUyMGNvbG9yZnVsfGVufDF8fHx8MTc3MjQ3MzkyOXww&ixlib=rb-4.1.0&q=80&w=1080";
 
 export function Player() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const movie = MOCK_MOVIES.find((m) => m.id === id) || MOCK_MOVIES[0];
+  const { hasAdsDelay, variant } = usePrototype();
+
+  // Total ads to show (like "Ad 1 of 6")
+  const totalAds = useMemo(() => Math.floor(Math.random() * 4) + 3, []); // 3-6 ads
+  const [currentAdIndex, setCurrentAdIndex] = useState(1);
+
+  // Pick a random ad from the database
+  const currentAd = useMemo(
+    () => AD_VIDEOS[Math.floor(Math.random() * AD_VIDEOS.length)],
+    []
+  );
 
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
-  const [adTimer, setAdTimer] = useState(15);
-  const [showSkip, setShowSkip] = useState(false);
-  const [isAd, setIsAd] = useState(false); // Start with content, ad triggers on demand
-  const [skipTimer, setSkipTimer] = useState(5);
-  const [showAdPrompt, setShowAdPrompt] = useState(true); // Top-right "30 sec ad" indicator
-  const [adPromptTimer, setAdPromptTimer] = useState(30); // seconds before ad interrupts
+  const [contentProgress, setContentProgress] = useState(0);
 
-  // Ad prompt countdown (top-right indicator before ad plays)
+  // ---- Ad state ----
+  const [isAd, setIsAd] = useState(true); // Start with ad by default for A & B
+  const [adTimer, setAdTimer] = useState(currentAd.duration);
+  const [skipTimer, setSkipTimer] = useState(5);
+  const [showSkip, setShowSkip] = useState(false);
+  const [adFinished, setAdFinished] = useState(false);
+
+  // ---- Variant A & B: Surprise mid-roll ad ----
+  const [surpriseDelay] = useState(() => Math.floor(Math.random() * 11) + 8);
+  const [surpriseTriggered, setSurpriseTriggered] = useState(false);
+
+  // ---- Variant C: Ads Delay prompt ----
+  const [adPromptTimer, setAdPromptTimer] = useState(30);
+  const [showAdPrompt, setShowAdPrompt] = useState(false);
+
+  // "You may also like" expanded
+  const [showSimilar, setShowSimilar] = useState(false);
+
+  // Find similar movies
+  const similarMovies = MOCK_MOVIES.filter(
+    (m) => m.id !== movie.id && m.genre.some((g) => movie.genre.includes(g))
+  ).slice(0, 6);
+
+  // Initialize ad behavior based on variant
   useEffect(() => {
-    if (!showAdPrompt || isAd) return;
+    if (hasAdsDelay) {
+      // Variant C: Don't auto-start ad, show prompt instead
+      setIsAd(false);
+      setShowAdPrompt(true);
+    } else {
+      // Variant A & B: Start with pre-roll ad immediately
+      setIsAd(true);
+    }
+  }, [hasAdsDelay]);
+
+  // =============================================
+  // Content playback progress
+  // =============================================
+  useEffect(() => {
+    if (!isPlaying || isAd) return;
+    const interval = setInterval(() => {
+      setContentProgress((prev) => Math.min(prev + 0.05, 100));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isPlaying, isAd]);
+
+  // =============================================
+  // VARIANT A & B: Surprise mid-roll ad after first ad ends
+  // =============================================
+  useEffect(() => {
+    if (hasAdsDelay || surpriseTriggered || isAd || !adFinished) return;
+    if (!isPlaying) return;
+
+    const timer = setTimeout(() => {
+      setSurpriseTriggered(true);
+      setIsAd(true);
+      setAdTimer(currentAd.duration);
+      setSkipTimer(5);
+      setShowSkip(false);
+      setCurrentAdIndex((prev) => Math.min(prev + 1, totalAds));
+    }, surpriseDelay * 1000);
+
+    return () => clearTimeout(timer);
+  }, [
+    hasAdsDelay,
+    surpriseTriggered,
+    isAd,
+    isPlaying,
+    surpriseDelay,
+    currentAd.duration,
+    adFinished,
+    totalAds,
+  ]);
+
+  // =============================================
+  // VARIANT C: Ads Delay prompt countdown
+  // =============================================
+  useEffect(() => {
+    if (!hasAdsDelay || !showAdPrompt || isAd) return;
+    if (!isPlaying) return;
     const interval = setInterval(() => {
       setAdPromptTimer((prev) => {
         if (prev <= 1) {
-          // Auto-trigger ad when countdown reaches 0
           setShowAdPrompt(false);
           setIsAd(true);
-          setAdTimer(15);
+          setAdTimer(currentAd.duration);
           setSkipTimer(5);
           setShowSkip(false);
           return 0;
@@ -35,30 +132,30 @@ export function Player() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [showAdPrompt, isAd]);
+  }, [hasAdsDelay, showAdPrompt, isAd, isPlaying, currentAd.duration]);
 
-  // User taps ad prompt to watch ad now
   const handleWatchAdNow = () => {
     setShowAdPrompt(false);
     setIsAd(true);
-    setAdTimer(15);
+    setAdTimer(currentAd.duration);
     setSkipTimer(5);
     setShowSkip(false);
   };
 
-  // Ad Countdown
+  // =============================================
+  // Ad playback countdown (ALL variants)
+  // =============================================
   useEffect(() => {
     if (!isPlaying || !isAd) return;
-
     const interval = setInterval(() => {
       setAdTimer((prev) => {
         if (prev <= 1) {
           setIsAd(false);
+          setAdFinished(true);
           return 0;
         }
         return prev - 1;
       });
-
       setSkipTimer((prev) => {
         if (prev <= 1) {
           setShowSkip(true);
@@ -67,141 +164,383 @@ export function Player() {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(interval);
   }, [isPlaying, isAd]);
 
   const handleSkip = () => {
     setIsAd(false);
+    setAdFinished(true);
   };
 
-  return (
-    <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-      {/* Mock Video Content */}
-      <div className="absolute inset-0 bg-gray-900">
-        <div className="w-full h-full flex items-center justify-center text-gray-500 bg-black relative overflow-hidden">
-          {isAd ? (
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/30 to-orange-900/30 flex flex-col items-center justify-center">
-              <span className="text-5xl md:text-7xl font-black text-yellow-500/20 uppercase tracking-widest">
-                Advertisement
-              </span>
-              <span className="text-xl md:text-2xl text-white mt-4 font-bold">
-                Ad Video Placeholder
-              </span>
-            </div>
-          ) : (
-            <div className="absolute inset-0">
-              <img
-                src={movie.poster}
-                alt={movie.title}
-                className="w-full h-full object-cover opacity-40"
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl md:text-6xl font-black text-white/20 uppercase tracking-widest">
-                  {movie.title}
-                </span>
-                <span className="text-lg md:text-2xl text-white mt-4 font-bold">
-                  Main Content Playing
-                </span>
-              </div>
-            </div>
-          )}
+  const adElapsed = currentAd.duration - adTimer;
+  const adTimeStr = `${String(Math.floor(adElapsed / 60)).padStart(2, "0")}:${String(adElapsed % 60).padStart(2, "0")}`;
 
-          {/* Video Controls */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-            {/* Progress bar */}
-            <div className="w-full h-1 bg-gray-600 rounded-full mb-4 overflow-hidden cursor-pointer group">
-              <div
-                className="h-full bg-[#F4BD39] transition-all duration-1000"
-                style={{
-                  width: isAd
-                    ? `${((15 - adTimer) / 15) * 100}%`
-                    : "25%",
-                }}
-              />
-            </div>
-            <div className="flex justify-between items-center text-white">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="hover:scale-110 transition-transform"
-                >
-                  {isPlaying ? (
-                    <Pause fill="white" size={24} />
-                  ) : (
-                    <Play fill="white" size={24} />
-                  )}
-                </button>
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="hover:scale-110 transition-transform"
-                >
-                  {isMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
-                </button>
-                {!isAd && (
-                  <span className="text-sm text-gray-300 ml-2">
-                    {movie.title}
+  return (
+    <div className="bg-[#0a0a0a] min-h-screen text-white pb-6">
+      {/* ============================================ */}
+      {/* VIDEO PLAYER AREA */}
+      {/* ============================================ */}
+      <div className="relative w-full aspect-video bg-black">
+        {/* Video / Ad content */}
+        {isAd ? (
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/40 to-orange-900/30 flex flex-col items-center justify-center">
+            {currentAd.url ? (
+              <span className="text-gray-400 text-sm">Playing ad video...</span>
+            ) : (
+              <>
+                <img
+                  src={movie.poster}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover opacity-30"
+                />
+                <div className="relative z-10 flex flex-col items-center">
+                  <span className="text-3xl md:text-5xl font-black text-white/15 uppercase tracking-widest">
+                    Advertisement
                   </span>
-                )}
+                  <span className="text-white mt-2 font-medium">
+                    {currentAd.brand} — {currentAd.title}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="absolute inset-0">
+            <img
+              src={movie.poster}
+              alt={movie.title}
+              className="w-full h-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              {!isPlaying && (
+                <button
+                  onClick={() => setIsPlaying(true)}
+                  className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                >
+                  <Play size={28} fill="white" className="ml-1" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Back button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-3 left-3 z-30 p-1.5 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition"
+        >
+          <ChevronLeft size={22} />
+        </button>
+
+        {/* "Learn More" button (during ad) */}
+        {isAd && (
+          <button className="absolute top-3 right-3 z-30 text-white text-xs bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded hover:bg-black/60 transition">
+            Learn More
+          </button>
+        )}
+
+        {/* Variant C: "Video 30" countdown prompt */}
+        {hasAdsDelay && showAdPrompt && !isAd && (
+          <button
+            onClick={handleWatchAdNow}
+            className="absolute top-3 right-3 z-30 flex items-center gap-2 bg-[#F5C542]/90 backdrop-blur-sm text-black pl-3 pr-3 py-1.5 rounded-xl shadow-lg hover:bg-[#F5C542] transition cursor-pointer"
+          >
+            <span className="text-xs font-medium">Video</span>
+            <div className="flex items-center gap-1 bg-black/20 rounded-lg px-2 py-0.5">
+              <span className="text-xs font-bold">{adPromptTimer}</span>
+              <Play size={10} fill="black" />
+            </div>
+          </button>
+        )}
+
+        {/* Ad skip / countdown overlay */}
+        {isAd && (
+          <div className="absolute top-12 right-3 z-30 flex flex-col items-end gap-2">
+            {showSkip ? (
+              <button
+                onClick={handleSkip}
+                className="bg-white/90 text-black px-4 py-1.5 rounded text-xs flex items-center gap-1.5 font-bold cursor-pointer"
+              >
+                Skip Ad <SkipForward size={12} />
+              </button>
+            ) : (
+              <div className="bg-black/50 text-gray-400 px-3 py-1 rounded text-xs border border-gray-600">
+                Skip in {skipTimer}s
               </div>
-              <span className="text-sm font-medium text-gray-300">
-                {isAd
-                  ? `00:${String(15 - adTimer).padStart(2, "0")} / 00:15`
-                  : "12:34 / 45:00"}
+            )}
+          </div>
+        )}
+
+        {/* Progress bar */}
+        <div className="absolute bottom-7 left-0 right-0 h-0.5 bg-gray-700 z-20">
+          <div
+            className="h-full bg-[#F4BD39] transition-all duration-1000"
+            style={{
+              width: isAd
+                ? `${((currentAd.duration - adTimer) / currentAd.duration) * 100}%`
+                : `${contentProgress}%`,
+            }}
+          />
+        </div>
+
+        {/* Ad indicator bar at bottom */}
+        {isAd && (
+          <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-1.5 flex items-center justify-between z-20">
+            <span className="text-[11px] text-gray-300">
+              Ad {currentAdIndex} of {totalAds} ({adTimeStr})
+            </span>
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="p-0.5"
+            >
+              {isPlaying ? (
+                <Pause size={14} className="text-gray-300" />
+              ) : (
+                <Play size={14} fill="white" className="text-gray-300" />
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Content time bar at bottom (when not ad) */}
+        {!isAd && (
+          <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-1.5 flex items-center justify-between z-20">
+            <div className="flex items-center gap-2">
+              <button onClick={() => setIsPlaying(!isPlaying)} className="p-0.5">
+                {isPlaying ? (
+                  <Pause size={14} className="text-gray-300" />
+                ) : (
+                  <Play size={14} fill="white" className="text-gray-300" />
+                )}
+              </button>
+              <span className="text-[11px] text-gray-400">12:34 / 45:00</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ============================================ */}
+      {/* SERIES INFO */}
+      {/* ============================================ */}
+      <div className="px-4 pt-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-[15px] font-medium text-white line-clamp-1">
+              {movie.title}
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              {movie.episodes && movie.episodes.length > 0 && (
+                <span className="text-xs text-gray-400">
+                  Episode {movie.episodes[0].number}
+                </span>
+              )}
+              <span className="bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded text-[10px] font-medium">
+                {movie.rating}
               </span>
             </div>
+          </div>
+          <div className="flex items-center gap-4 shrink-0 pt-1">
+            <button className="text-gray-400 hover:text-white transition">
+              <Bookmark size={20} />
+            </button>
+            <button className="text-gray-400 hover:text-white transition">
+              <Share2 size={20} />
+            </button>
+            <button className="text-gray-400 hover:text-white transition">
+              <Info size={20} />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Top Right: Ad Prompt (before ad plays) - "Video 30" style */}
-      {showAdPrompt && !isAd && (
-        <button
-          onClick={handleWatchAdNow}
-          className="absolute top-6 right-6 md:top-8 md:right-8 flex items-center gap-2 bg-[#F5C542]/90 backdrop-blur-sm text-black pl-3 pr-3 py-2 rounded-xl shadow-lg hover:bg-[#F5C542] transition cursor-pointer group z-30"
-        >
-          <span className="text-sm font-medium">Video</span>
-          <div className="flex items-center gap-1 bg-black/20 rounded-lg px-2 py-1">
-            <span className="text-sm font-bold">{adPromptTimer}</span>
-            <Play size={12} fill="black" />
-          </div>
-        </button>
-      )}
-
-      {/* Top Right: Ad Playing Overlay */}
-      {isAd && (
-        <div className="absolute top-6 right-6 md:top-8 md:right-8 flex flex-col items-end gap-3 z-30">
-          {/* Ad countdown badge */}
-          <div className="bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg border border-white/10">
-            <span className="text-sm">Ad</span>
-            <span className="bg-[#F4BD39] text-black px-2 py-0.5 rounded text-sm font-bold min-w-[28px] text-center">
-              {adTimer}
+      {/* ============================================ */}
+      {/* SELECT EPISODE */}
+      {/* ============================================ */}
+      {movie.episodes && movie.episodes.length > 0 && (
+        <div className="mt-4">
+          <div className="flex items-center justify-between px-4 mb-3">
+            <span className="text-[#F4BD39] text-sm font-medium">
+              Select episode
             </span>
+            <div className="flex items-center gap-3">
+              <button className="text-gray-400 hover:text-white transition">
+                <Grid3X3 size={18} />
+              </button>
+              <button className="text-gray-400 hover:text-white transition">
+                <Download size={18} />
+              </button>
+            </div>
           </div>
 
-          {/* Skip button (appears after 5 seconds) */}
-          {showSkip ? (
-            <button
-              onClick={handleSkip}
-              className="bg-white/90 backdrop-blur-md text-black px-6 py-2.5 rounded-md flex items-center gap-2 hover:bg-white transition font-bold shadow-xl cursor-pointer"
-            >
-              Skip Ad <SkipForward size={16} />
-            </button>
-          ) : (
-            <div className="bg-black/50 backdrop-blur-md text-gray-400 px-5 py-2 rounded-md text-sm border border-gray-600">
-              Skip in {skipTimer}s
-            </div>
-          )}
+          {/* Episode list */}
+          <div className="space-y-0">
+            {movie.episodes.slice(0, 3).map((ep) => (
+              <EpisodeRow
+                key={ep.id}
+                thumbnail={ep.thumbnail}
+                title={`${movie.title} EP.${ep.number} [${ep.number}/${movie.episodes!.length}]`}
+                subtitle={`Episode ${ep.number}`}
+                duration={ep.duration}
+                movieId={movie.id}
+              />
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Back/Close Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-6 left-6 md:top-8 md:left-8 text-white p-2.5 bg-black/40 backdrop-blur-sm hover:bg-black/60 rounded-full transition z-50"
-      >
-        <X size={24} />
-      </button>
+      {/* ============================================ */}
+      {/* INLINE ADVERTISEMENT BANNER */}
+      {/* ============================================ */}
+      <div className="mt-5 px-4">
+        <p className="text-center text-gray-400 text-xs mb-2">Advertisement</p>
+        <div className="relative rounded-lg overflow-hidden bg-gray-900 aspect-[16/9]">
+          <img
+            src={AD_BANNER_IMAGE}
+            alt="Advertisement"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+            <button className="bg-[#F4BD39] text-black text-xs px-5 py-1.5 rounded-full font-medium">
+              ดูเต็มๆ
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================ */}
+      {/* MORE EPISODES (below ad) */}
+      {/* ============================================ */}
+      {movie.episodes && movie.episodes.length > 3 && (
+        <div className="mt-4">
+          {movie.episodes.slice(3).map((ep) => (
+            <EpisodeRow
+              key={ep.id}
+              thumbnail={ep.thumbnail}
+              title={`${movie.title} EP.${ep.number} [${ep.number}/${movie.episodes!.length}]`}
+              subtitle={`Episode ${ep.number}`}
+              duration={ep.duration}
+              movieId={movie.id}
+              showPlayAfterAd
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ============================================ */}
+      {/* YOU MAY ALSO LIKE */}
+      {/* ============================================ */}
+      <div className="mt-5 px-4">
+        <button
+          onClick={() => setShowSimilar(!showSimilar)}
+          className="flex items-center justify-between w-full"
+        >
+          <span className="text-[#F4BD39] text-sm font-medium">
+            You may also like...
+          </span>
+          <ChevronUp
+            size={20}
+            className={`text-gray-400 transition-transform duration-300 ${showSimilar ? "" : "rotate-180"}`}
+          />
+        </button>
+
+        {showSimilar && (
+          <div className="grid grid-cols-3 gap-2 mt-3">
+            {similarMovies.map((m) => (
+              <SimilarCard key={m.id} movie={m} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Debug info */}
+      <div className="mt-6 mx-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1.5 text-[10px] text-gray-500 border border-gray-800/50 inline-block">
+        Prototype {variant} •{" "}
+        {hasAdsDelay
+          ? "Ads Delay mode"
+          : `Pre-roll ad → surprise mid-roll ~${surpriseDelay}s`}
+      </div>
     </div>
+  );
+}
+
+/* ============================================ */
+/* EPISODE ROW COMPONENT */
+/* ============================================ */
+function EpisodeRow({
+  thumbnail,
+  title,
+  subtitle,
+  duration,
+  movieId,
+  showPlayAfterAd,
+}: {
+  thumbnail: string;
+  title: string;
+  subtitle: string;
+  duration: string;
+  movieId: string;
+  showPlayAfterAd?: boolean;
+}) {
+  return (
+    <Link
+      to={`/player/${movieId}`}
+      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-800/40 transition"
+    >
+      {/* Thumbnail */}
+      <div className="relative w-[90px] aspect-video rounded overflow-hidden shrink-0 bg-gray-800">
+        <img
+          src={thumbnail}
+          alt=""
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-7 h-7 bg-black/50 rounded-full flex items-center justify-center">
+            <Play size={12} fill="white" className="ml-0.5" />
+          </div>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        {showPlayAfterAd && (
+          <span className="text-gray-500 text-[10px] block mb-0.5">
+            Play after ad
+          </span>
+        )}
+        <p className="text-white text-xs line-clamp-2">{title}</p>
+        <p className="text-gray-500 text-[11px] mt-0.5">{subtitle}</p>
+      </div>
+
+      {/* Download */}
+      <button
+        className="text-gray-500 hover:text-gray-300 transition shrink-0"
+        onClick={(e) => e.preventDefault()}
+      >
+        <Download size={18} />
+      </button>
+    </Link>
+  );
+}
+
+/* ============================================ */
+/* SIMILAR MOVIE CARD */
+/* ============================================ */
+function SimilarCard({ movie }: { movie: Movie }) {
+  const { hasPreview } = usePrototype();
+  const destination = hasPreview
+    ? `/details/${movie.id}`
+    : `/player/${movie.id}`;
+
+  return (
+    <Link to={destination} className="group">
+      <div className="aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden relative">
+        <img
+          src={movie.poster}
+          alt={movie.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+      </div>
+      <p className="text-xs text-gray-400 mt-1 line-clamp-1">{movie.title}</p>
+    </Link>
   );
 }

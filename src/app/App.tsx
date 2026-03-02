@@ -1,4 +1,3 @@
-
 import { RouterProvider } from "react-router";
 import { router } from "./routes";
 import "slick-carousel/slick/slick.css";
