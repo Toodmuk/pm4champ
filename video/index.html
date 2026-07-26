@@ -176,8 +176,8 @@ body{
 .rchip{border:2px solid var(--rule);background:#fff;border-radius:30px;padding:8px 18px;font-size:21px;font-weight:700;color:#55555E}
 .rchip.sel{background:var(--magenta);border-color:var(--magenta);color:#fff}
 .addbtn{margin-top:26px;height:88px;background:linear-gradient(90deg,var(--red),var(--magenta));color:#fff;font-size:31px}
-.toast{position:absolute;left:26px;right:26px;bottom:40px;background:var(--ink);color:#fff;font-size:26px;font-weight:600;
-  border-radius:20px;padding:22px 28px;display:flex;align-items:center;gap:14px}
+.toast{position:absolute;left:26px;right:26px;bottom:360px;background:var(--ink);color:#fff;font-size:26px;font-weight:600;
+  border-radius:20px;padding:22px 28px;display:flex;align-items:center;gap:14px;box-shadow:0 16px 40px rgba(0,0,0,.3)}
 
 /* S04 web */
 .webscr{position:absolute;inset:0;background:#fff}
@@ -190,8 +190,8 @@ body{
 .adimg{height:250px;background:linear-gradient(135deg,#3E5C9A,#2E6FD9);display:flex;align-items:center;justify-content:center;color:#fff;
   font-size:37px;font-weight:800;letter-spacing:.02em}
 .adcta{margin:18px 22px 22px;height:74px;border:2px solid var(--rule);border-radius:14px;font-size:26px;color:#55555E}
-.urlbar{margin:18px 20px 0;display:flex;align-items:center;gap:12px;background:#F0F0F5;border-radius:26px;height:76px;padding:0 26px;
-  font-size:25px;font-weight:600;font-family:"Noto Sans",sans-serif;color:#55555E}
+.urlbar{margin:18px 20px 0;display:flex;align-items:center;gap:10px;background:#F0F0F5;border-radius:26px;height:76px;padding:0 22px;
+  font-size:22px;font-weight:600;font-family:"Noto Sans",sans-serif;color:#55555E;white-space:nowrap;overflow:hidden}
 .urlbar .ns{color:#B42318;font-weight:800}
 .blockpage{position:absolute;left:0;right:0;bottom:0;top:120px;background:linear-gradient(180deg,#C22026,#8F1418);color:#fff;display:flex;
   flex-direction:column;align-items:center;text-align:center;padding:0 40px}
@@ -255,12 +255,12 @@ body{
 
 /* S08 parental */
 .kidscr{position:absolute;inset:0;background:#fff}
-.profrow{display:flex;gap:22px;padding:24px 30px;border-bottom:2px solid #EFEFF3}
+.profrow{display:flex;gap:22px;padding:16px 30px;border-bottom:2px solid #EFEFF3}
 .prof{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:24px;font-weight:700}
 .prof .pa{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:#fff}
 .prof.p1 .pa{background:var(--blue)}
 .prof.p2 .pa{background:var(--magenta);outline:5px solid #F8C8DF}
-.setrow{display:flex;align-items:center;gap:20px;padding:25px 30px;border-bottom:2px solid #EFEFF3}
+.setrow{display:flex;align-items:center;gap:20px;padding:19px 30px;border-bottom:2px solid #EFEFF3}
 .setrow .s-ic{width:64px;height:64px;border-radius:18px;background:var(--panel);display:flex;align-items:center;justify-content:center}
 .setrow .s-t{font-size:26px;font-weight:700}
 .setrow .s-v{font-size:23px;color:#55555E;font-weight:600;margin-top:4px}
@@ -320,7 +320,7 @@ const T = {
   },
   out:{
     head:"สมัครยังไง",
-    sub:"3 ขั้นตอน เริ่มใช้ได้เลย",
+    sub:"สมัครใน 3 ขั้นตอน",
     s1t:"กด USSD สมัคร", s1d:"แพ็กทดลองใช้ ฟรีเดือนแรก",
     s2t:"ดาวน์โหลดแอป", s2d:"App Store หรือ Play Store",
     s3t:"ล็อกอิน", s3d:"ด้วยเบอร์ที่สมัคร หรือ True ID / True App",
@@ -329,10 +329,10 @@ const T = {
     close1:"True CyberSafe PRO",
     close2:"ปกป้อง 9 ฟีเจอร์ ครบ จบ ในแอปเดียว พร้อมประกันภัยไซเบอร์",
     vo:"“กด *900*7531# โหลดแอป แล้วล็อกอินด้วยเบอร์ที่สมัคร เริ่มต้น 49 บาทต่อเดือน ใช้ฟรีเดือนแรก”",
-    fine:"ราคายังไม่รวมภาษีมูลค่าเพิ่ม · ใช้ได้สูงสุดครั้งละ 1 อุปกรณ์ · รายการส่งเสริมการขาย 4 พ.ย. 2568 – 31 ธ.ค. 2570",
+    fine:"ราคายังไม่รวมภาษีมูลค่าเพิ่ม · ใช้ได้สูงสุดครั้งละ 1 อุปกรณ์ · รายการส่งเสริมการขาย 4&nbsp;พ.ย.&nbsp;2568 – 31&nbsp;ธ.ค.&nbsp;2570",
   },
   s01:{ th:"บล็อกสายเรียกเข้าอันตราย", en:"CALL AI FILTER", icon:"call", scam:true,
-    problem:"สายจากเบอร์แปลก อ้างเป็นเจ้าหน้าที่รัฐ ให้รีบรับสิทธิ์เงินก่อนหมด",
+    problem:"สายจากเบอร์แปลกโทรเข้า อ้างเป็นเจ้าหน้าที่รัฐ ให้รีบรับสิทธิ์เงินก่อนหมด",
     vo:"“เช็คทุกเบอร์ที่โทรเข้า ตั้งแต่ก่อนคุณกดรับ”",
     result:"ผู้ใช้วางสาย ไม่เสียเงิน",
     sticky:"ฐานข้อมูลจากภาครัฐ ตำรวจไซเบอร์ และ สกมช.",
@@ -396,7 +396,7 @@ const T = {
     wbT:"การป้องกันไวไฟ",
     wbD:"ตรวจพบ Wi-Fi ที่ไม่ปลอดภัย เชื่อมต่อกับ Free_Cafe_WiFi แล้ว",
     panelT:"การป้องกันไวไฟ",
-    tg1:"แจ้งเตือนไวไฟไม่ปลอดภัย", tg2:"ตรวจสอบเครือข่ายอัตโนมัติ" },
+    tg1:"แจ้งเตือนไวไฟไม่ปลอดภัย", tg2:"แจ้งเตือนทันทีที่เชื่อมต่อ" },
   s07:{ th:"เก็บรหัสผ่านอย่างปลอดภัย", en:"PASSWORD STORAGE", icon:"key",
     problem:"มีหลายบัญชี จำไม่ไหว เลยจดไว้ในโน้ตมือถือ และใช้รหัสเดียวกันทุกที่",
     vo:"“สร้างและเก็บรหัสผ่านให้ปลอดภัย ไม่ต้องจดใส่โน้ตมือถืออีกต่อไป”",
@@ -411,7 +411,7 @@ const T = {
   s08:{ th:"ดูแลการใช้เน็ตของลูก", en:"PARENTAL CONTROL", icon:"family",
     problem:"ลูกเล่นมือถือดึก และเข้าเว็บที่ไม่เหมาะกับวัย",
     vo:"“ตั้งเวลาและกรองเนื้อหาให้ลูก ได้จากเครื่องคุณ”",
-    result:"เครื่องลูกล็อกเองเมื่อครบเวลา และแจ้งเตือนเมื่อเข้าเว็บที่บล็อกไว้",
+    result:"เครื่องลูกล็อกเองเมื่อครบเวลา และแจ้งเตือนพ่อแม่เมื่อลูกเข้าเว็บที่บล็อกไว้",
     footnote:"1 แพ็กเกจ ใช้งานได้สูงสุดครั้งละ 1 อุปกรณ์",
     appT:"Parental Control",
     profiles:["พ่อ","ลูก"],
@@ -581,11 +581,11 @@ function chromeAnim(refs,d,local,D){
   cap.style.color=capCol;
   const capStart=bAct===0?0.25:(bAct===1?b1:b3s);
   A(cap,seg(local,capStart,0.4),{y:L(16,0,seg(local,capStart,0.4))});
-  // sticky from beat2 onward
+  // persistent text enters early and stays for the whole scene (ข้อความค้างจอ)
   const st=q(".sticky");
-  if(st)A(st,seg(local,b1+0.5,0.5),{y:L(20,0,seg(local,b1+0.5,0.5))});
+  if(st)A(st,seg(local,0.7,0.5),{y:L(20,0,seg(local,0.7,0.5))});
   const fn=q(".footnote");
-  if(fn)A(fn,seg(local,b1+0.7,0.5));
+  if(fn)A(fn,seg(local,0.9,0.5));
   // freeze card at beat3
   const fc=q(".fcard");
   const p=seg(local,b3s,0.55,back);
@@ -686,7 +686,7 @@ function chromeAnim(refs,d,local,D){
     q(".callscr").style.filter=`brightness(${L(1,0.55,dim)})`;
     A(q(".ended"),seg(local,b3s+0.35,0.4));
     A(q(".cs-actions"),1-dim);
-    A(wc,(seg(local,b1,0.35))*(1-dim*0.6),undefined);
+    A(q(".cs-lab"),1-seg(local,b3s+0.25,0.4));
   };
 })();
 
@@ -910,7 +910,7 @@ function chromeAnim(refs,d,local,D){
     const scn=seg(local,b1+0.5,2.2,eio);
     q(".ringfill").style.strokeDashoffset=CIRC*(1-scn);
     const filesDone=Math.round(scn*298);
-    q(".pv").textContent=Math.round(filesDone/298*100)+"%";
+    q(".pv").textContent=Math.floor(filesDone/298*100)+"%";
     q(".filesn").textContent=filesDone;
     // results appear
     const rp=seg(local,b1+2.9,0.5,back);
@@ -1047,9 +1047,9 @@ function chromeAnim(refs,d,local,D){
         <div class="toggle on" style="margin-left:auto"><div class="knob"></div></div>
       </div>`).join("")}
     </div>
-    <div class="notif nf1" style="bottom:150px">${svg("lock",34,"#7ED4A8",2.2)}<div>
+    <div class="notif nf1" style="top:96px">${svg("lock",34,"#7ED4A8",2.2)}<div>
       <div class="nt-t">${d.n1t}</div><div class="nt-d">${d.n1d}</div></div></div>
-    <div class="notif nf2" style="bottom:20px">${svg("bell",34,"#F8B4D4",2.2)}<div>
+    <div class="notif nf2" style="top:250px">${svg("bell",34,"#F8B4D4",2.2)}<div>
       <div class="nt-t">${d.n2t}</div><div class="nt-d">${d.n2d}</div></div></div>
   </div>`;
   const q=s=>refs.screen.querySelector(s);
@@ -1067,11 +1067,11 @@ function chromeAnim(refs,d,local,D){
       const tg=r.querySelector(".toggle");
       tg.classList.toggle("on",local>b1+0.55+i*0.45);
     });
-    // notifications slide up at end of beat2 so they are readable before the freeze card
+    // notifications drop from the top at end of beat2, clear of the settings rows
     const n1=seg(local,b3s-1.7,0.5,back);
-    A(q(".nf1"),seg(local,b3s-1.7,0.3),{y:L(90,0,n1)});
+    A(q(".nf1"),seg(local,b3s-1.7,0.3),{y:L(-110,0,n1)});
     const n2=seg(local,b3s-1.0,0.5,back);
-    A(q(".nf2"),seg(local,b3s-1.0,0.3),{y:L(90,0,n2)});
+    A(q(".nf2"),seg(local,b3s-1.0,0.3),{y:L(-110,0,n2)});
   };
 })();
 
