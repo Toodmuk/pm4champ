@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>True CyberSafe PRO — Demo Video Timeline (TH)</title>
+<style>
+@font-face{
+  font-family:"Noto Sans Thai";
+  src:url("fonts/NotoSansThai.ttf") format("truetype");
+  font-weight:100 900;
+}
+@font-face{
+  font-family:"Noto Sans";
+  src:url("fonts/NotoSans.ttf") format("truetype");
+  font-weight:100 900;
+}
+:root{
+  --red:#FF0000;
+  --magenta:#E5007D;
+  --blue:#2E6FD9;
+  --ink:#141416;
+  --rule:#E2E2E8;
+  --panel:#F5F5F8;
+  --safe:#12A150;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+body{
+  font-family:"Noto Sans Thai","Noto Sans","Sarabun","Leelawadee UI","Thonburi",system-ui,sans-serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+#stage{position:relative;width:1080px;height:1920px;background:var(--panel);overflow:hidden}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;background:var(--panel)}
+
+/* ---------- shared chrome for feature scenes ---------- */
+.chrome{position:absolute;top:0;left:0;right:0;padding:84px 72px 0}
+.brandrow{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:18px}
+.brand .bicon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--red),var(--magenta));display:flex;align-items:center;justify-content:center}
+.brand .bname{font-size:30px;font-weight:700;letter-spacing:.01em}
+.scnum{font-size:30px;font-weight:600;color:#8A8A93;font-family:"Noto Sans",sans-serif}
+.scnum b{color:var(--magenta);font-weight:800}
+.titleblock{margin-top:52px}
+.t-th{font-size:66px;font-weight:800;line-height:1.25;white-space:nowrap}
+.t-en{margin-top:10px;font-size:27px;font-weight:700;letter-spacing:.14em;color:#8A8A93;font-family:"Noto Sans",sans-serif}
+.beatrow{margin-top:34px;height:64px;position:relative}
+.beat{position:absolute;left:0;top:0;display:inline-flex;align-items:center;gap:14px;height:64px;padding:0 30px;border-radius:32px;color:#fff;font-size:31px;font-weight:700}
+.beat .bdot{width:14px;height:14px;border-radius:50%;background:#fff}
+.beat.b1{background:var(--red)}
+.beat.b2{background:var(--blue)}
+.beat.b3{background:var(--safe)}
+
+.simchip{position:absolute;top:350px;right:72px;background:#FFF4E5;border:2px solid #F0B26B;color:#8A5312;
+  font-size:28px;font-weight:700;padding:12px 26px;border-radius:14px}
+.androidnote{position:absolute;left:16px;right:16px;bottom:16px;background:#B42318;color:#fff;z-index:80;
+  font-size:25px;font-weight:700;text-align:center;padding:16px 0;border-radius:0 0 58px 58px}
+
+.phonewrap{position:absolute;left:50%;top:472px;transform:translateX(-50%)}
+.phone{position:relative;width:534px;height:1064px;background:#0E0E12;border-radius:74px;padding:16px;
+  box-shadow:0 44px 90px rgba(20,20,22,.20),0 10px 28px rgba(20,20,22,.14)}
+.screen{position:relative;width:100%;height:100%;border-radius:58px;overflow:hidden;background:#fff}
+.notch{position:absolute;top:30px;left:50%;transform:translateX(-50%);width:150px;height:36px;background:#0E0E12;border-radius:20px;z-index:60}
+.statusbar{height:78px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 34px 8px;font-size:24px;font-weight:600;font-family:"Noto Sans",sans-serif}
+.statusbar .sr{display:flex;gap:10px;align-items:center}
+
+/* caption + sticky */
+.caption{position:absolute;left:72px;right:72px;top:1592px;text-align:center}
+.cap-line{font-size:47px;font-weight:700;line-height:1.45;min-height:70px}
+.sticky{position:absolute;left:72px;right:72px;top:1756px;text-align:center}
+.sticky .in{display:inline-block;background:#fff;border:2px solid var(--rule);border-radius:18px;
+  padding:16px 34px;font-size:31px;font-weight:600;color:#55555E;line-height:1.5}
+.footnote{position:absolute;left:72px;right:72px;top:1866px;text-align:center;font-size:23px;color:#8A8A93;font-weight:500}
+
+/* feature freeze card */
+.fcard{position:absolute;left:50%;top:1180px;width:820px;margin-left:-410px;background:#fff;border-radius:34px;
+  padding:40px 46px;box-shadow:0 30px 70px rgba(20,20,22,.22);display:flex;align-items:center;gap:34px}
+.fcard .fic{flex:0 0 108px;width:108px;height:108px;border-radius:28px;background:linear-gradient(135deg,var(--red),var(--magenta));
+  display:flex;align-items:center;justify-content:center}
+.fcard .fth{font-size:43px;font-weight:800;line-height:1.3}
+.fcard .fen{margin-top:6px;font-size:24px;font-weight:700;letter-spacing:.12em;color:#8A8A93;font-family:"Noto Sans",sans-serif}
+.fcard .fok{margin-top:10px;font-size:29px;font-weight:700;color:var(--safe);display:flex;align-items:center;gap:10px}
+
+/* progress bar */
+#progress{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(20,20,22,.08);z-index:999}
+#progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--magenta))}
+
+/* ---------- IN scene ---------- */
+#sc-in{background:linear-gradient(160deg,#C4006B 0%,var(--magenta) 34%,var(--red) 100%);color:#fff}
+#sc-in .inwrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center}
+#sc-in .shield{margin-top:470px;width:300px;height:300px;position:relative;z-index:5}
+#sc-in .ring{position:absolute;left:50%;top:470px;width:300px;height:300px;margin-left:-150px;border-radius:50%;
+  border:3px solid rgba(255,255,255,.5)}
+#sc-in .orb{position:absolute;left:50%;top:470px;width:118px;height:118px;margin:91px 0 0 -59px;border-radius:32px;
+  background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.38);display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(2px)}
+#sc-in .in-name{margin-top:280px;font-size:44px;font-weight:600;letter-spacing:.02em;opacity:.92}
+#sc-in .in-head{margin-top:18px;font-size:84px;font-weight:800;line-height:1.3;text-align:center}
+#sc-in .in-chip{margin-top:44px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.5);
+  padding:18px 44px;border-radius:44px;font-size:37px;font-weight:700}
+#sc-in .in-vo{position:absolute;left:90px;right:90px;top:1660px;text-align:center;font-size:41px;font-weight:600;line-height:1.5;opacity:.95}
+
+/* ---------- OUT scene ---------- */
+#sc-out{background:#fff}
+#sc-out .o-head{position:absolute;top:120px;left:0;right:0;text-align:center;font-size:76px;font-weight:800}
+#sc-out .o-sub{position:absolute;top:238px;left:0;right:0;text-align:center;font-size:33px;font-weight:600;color:#8A8A93}
+#sc-out .steps{position:absolute;top:360px;left:110px;right:110px;display:flex;flex-direction:column;gap:36px}
+.stepcard{background:var(--panel);border:2px solid var(--rule);border-radius:32px;padding:40px 46px;display:flex;gap:36px;align-items:center}
+.stepcard .n{flex:0 0 84px;width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--magenta));
+  color:#fff;font-size:44px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans",sans-serif}
+.stepcard .s-t{font-size:41px;font-weight:800;line-height:1.35}
+.stepcard .s-d{margin-top:8px;font-size:31px;font-weight:500;color:#55555E;line-height:1.5}
+.stepcard .ussd{display:inline-block;margin-top:14px;background:var(--ink);color:#fff;font-family:"Noto Sans",monospace;
+  font-size:47px;font-weight:800;letter-spacing:.06em;padding:14px 34px;border-radius:18px}
+#sc-out .o-price{position:absolute;top:1215px;left:0;right:0;text-align:center;font-size:47px;font-weight:800}
+#sc-out .o-price small{font-size:31px;font-weight:600;color:#55555E}
+#sc-out .o-close{position:absolute;top:1330px;left:100px;right:100px;text-align:center;font-size:42px;font-weight:800;line-height:1.5}
+#sc-out .o-close .grad{background:linear-gradient(90deg,var(--red),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+#sc-out .o-vo{position:absolute;top:1580px;left:90px;right:90px;text-align:center;font-size:37px;font-weight:600;color:#55555E;line-height:1.55}
+#sc-out .o-fine{position:absolute;top:1790px;left:70px;right:70px;text-align:center;font-size:25px;font-weight:500;color:#8A8A93;line-height:1.6}
+
+/* ---------- generic in-phone building blocks ---------- */
+.apphead{display:flex;align-items:center;gap:16px;padding:16px 30px 18px;border-bottom:2px solid var(--rule)}
+.apphead .ah-t{font-size:31px;font-weight:700}
+.apphead .ah-s{font-size:22px;color:#8A8A93;font-weight:500}
+.listrow{display:flex;align-items:center;gap:20px;padding:24px 30px;border-bottom:2px solid #EFEFF3}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:12px;padding:6px 16px;font-size:22px;font-weight:700}
+.togglerow{display:flex;align-items:center;justify-content:space-between;padding:26px 30px;border-bottom:2px solid #EFEFF3}
+.tglab{font-size:27px;font-weight:600}
+.toggle{width:78px;height:44px;border-radius:22px;background:#D3D3DA;position:relative;transition:none}
+.toggle .knob{position:absolute;top:4px;left:4px;width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.toggle.on{background:var(--safe)}
+.toggle.on .knob{left:38px}
+.appbtn{display:flex;align-items:center;justify-content:center;border-radius:20px;font-weight:700;text-align:center}
+
+/* S01 call screen */
+.callscr{position:absolute;inset:0;background:linear-gradient(180deg,#1B1B26,#0E0E14);color:#fff}
+.callscr .cs-inc{margin-top:120px;text-align:center;font-size:26px;color:#B9B9C6;font-weight:500}
+.callscr .avatar{margin:34px auto 0;width:170px;height:170px;border-radius:50%;background:#2A2A38;
+  display:flex;align-items:center;justify-content:center;font-size:74px;font-weight:700;color:#8A8A99;position:relative}
+.callscr .av-ring{position:absolute;inset:-16px;border-radius:50%;border:3px solid rgba(255,255,255,.28)}
+.callscr .cs-num{margin-top:36px;text-align:center;font-size:52px;font-weight:700;font-family:"Noto Sans",sans-serif;letter-spacing:.02em}
+.callscr .cs-lab{margin-top:12px;text-align:center;font-size:27px;color:#B9B9C6}
+.callscr .cs-actions{position:absolute;bottom:70px;left:0;right:0;display:flex;justify-content:space-evenly}
+.callscr .cbtn{width:132px;height:132px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.callscr .dec{background:#E5484D}
+.callscr .acc{background:#30A46C}
+.warncard{position:absolute;left:22px;right:22px;top:560px;background:#fff;border-radius:30px;padding:30px 32px;color:var(--ink);
+  border-left:14px solid var(--red);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.warncard .wc-head{display:flex;align-items:center;gap:14px;font-size:27px;font-weight:800}
+.warncard .wc-body{margin-top:14px;font-size:29px;line-height:1.5;font-weight:600}
+.warncard .wc-tag{margin-top:16px}
+.callscr .ended{position:absolute;left:0;right:0;top:400px;text-align:center;font-size:41px;font-weight:700;color:#FF8589}
+
+/* S02 sms */
+.smsscr{position:absolute;inset:0;background:#fff}
+.bubble{margin:26px 26px 0;background:#F0F0F5;border-radius:28px;border-top-left-radius:8px;padding:26px 28px;max-width:420px;position:relative}
+.bubble .bb-t{font-size:28px;line-height:1.55;font-weight:500}
+.bubble .bb-link{margin-top:14px;font-size:26px;color:var(--blue);text-decoration:underline;font-weight:600;word-break:break-all}
+.bubble.blocked .bb-link{color:#9A9AA5;text-decoration:line-through}
+.smstag{position:absolute;top:-24px;right:-10px;background:var(--red);color:#fff;font-size:24px;font-weight:800;
+  padding:10px 20px;border-radius:14px;box-shadow:0 10px 24px rgba(229,0,125,.35);display:flex;gap:8px;align-items:center}
+.linkblock{margin:18px 26px 0;display:flex;align-items:center;gap:12px;background:#FDECEC;border:2px solid #F3A6A6;
+  color:#B42318;font-size:26px;font-weight:700;border-radius:16px;padding:14px 22px;width:fit-content}
+.tapfail{position:absolute;left:0;right:0;top:760px;text-align:center;font-size:34px;font-weight:800;color:#B42318}
+
+/* S03 block form */
+.blockscr{position:absolute;inset:0;background:#fff}
+.callogrow .ic{width:64px;height:64px;border-radius:50%;background:#F0F0F5;display:flex;align-items:center;justify-content:center}
+.formbox{margin:26px;background:var(--panel);border-radius:26px;padding:30px}
+.formbox .fb-l{font-size:24px;font-weight:700;color:#55555E}
+.forminput{margin-top:14px;background:#fff;border:2px solid var(--rule);border-radius:16px;height:84px;display:flex;align-items:center;
+  padding:0 24px;font-size:34px;font-weight:700;font-family:"Noto Sans",sans-serif}
+.forminput .caret{width:3px;height:44px;background:var(--magenta);margin-left:6px}
+.reasons{display:flex;gap:14px;margin-top:22px}
+.rchip{border:2px solid var(--rule);background:#fff;border-radius:30px;padding:8px 18px;font-size:21px;font-weight:700;color:#55555E}
+.rchip.sel{background:var(--magenta);border-color:var(--magenta);color:#fff}
+.addbtn{margin-top:26px;height:88px;background:linear-gradient(90deg,var(--red),var(--magenta));color:#fff;font-size:31px}
+.toast{position:absolute;left:26px;right:26px;bottom:40px;background:var(--ink);color:#fff;font-size:26px;font-weight:600;
+  border-radius:20px;padding:22px 28px;display:flex;align-items:center;gap:14px}
+
+/* S04 web */
+.webscr{position:absolute;inset:0;background:#fff}
+.feedcard{margin:20px 24px;background:#fff;border:2px solid var(--rule);border-radius:22px;overflow:hidden}
+.feedhead{display:flex;gap:16px;align-items:center;padding:18px 22px}
+.feedhead .flogo{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#B9B9C6,#8A8A99);filter:blur(6px)}
+.feedhead .fn{font-size:25px;font-weight:700;filter:blur(5px)}
+.feedhead .fs{font-size:20px;color:#8A8A93;margin-top:4px}
+.adbody{padding:0 22px 20px;font-size:27px;line-height:1.5;font-weight:600}
+.adimg{height:250px;background:linear-gradient(135deg,#3E5C9A,#2E6FD9);display:flex;align-items:center;justify-content:center;color:#fff;
+  font-size:37px;font-weight:800;letter-spacing:.02em}
+.adcta{margin:18px 22px 22px;height:74px;border:2px solid var(--rule);border-radius:14px;font-size:26px;color:#55555E}
+.urlbar{margin:18px 20px 0;display:flex;align-items:center;gap:12px;background:#F0F0F5;border-radius:26px;height:76px;padding:0 26px;
+  font-size:25px;font-weight:600;font-family:"Noto Sans",sans-serif;color:#55555E}
+.urlbar .ns{color:#B42318;font-weight:800}
+.blockpage{position:absolute;left:0;right:0;bottom:0;top:120px;background:linear-gradient(180deg,#C22026,#8F1418);color:#fff;display:flex;
+  flex-direction:column;align-items:center;text-align:center;padding:0 40px}
+.blockpage .bp-ic{margin-top:120px}
+.blockpage .bp-t{margin-top:40px;font-size:66px;font-weight:800}
+.blockpage .bp-e{margin-top:6px;font-size:30px;font-weight:700;letter-spacing:.2em;font-family:"Noto Sans",sans-serif;opacity:.85}
+.blockpage .bp-d{margin-top:36px;font-size:31px;line-height:1.6;font-weight:500;opacity:.95}
+.blockpage .bp-b{margin-top:56px;background:#fff;color:#8F1418;border-radius:18px;padding:20px 46px;font-size:29px;font-weight:800}
+
+/* S05 scan */
+.scanscr{position:absolute;inset:0;background:#fff}
+.mailrow{padding:22px 28px;border-bottom:2px solid #EFEFF3}
+.mailrow .m-f{font-size:26px;font-weight:700}
+.mailrow .m-s{font-size:25px;color:#55555E;margin-top:6px;font-weight:500}
+.attach{margin-top:14px;display:inline-flex;align-items:center;gap:12px;background:var(--panel);border:2px solid var(--rule);
+  border-radius:14px;padding:12px 20px;font-size:24px;font-weight:700;font-family:"Noto Sans",sans-serif}
+.scanring{margin:30px auto 0;width:300px;height:300px;position:relative}
+.scanring svg{transform:rotate(-90deg)}
+.scanring .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.scanring .pv{font-size:64px;font-weight:800;font-family:"Noto Sans",sans-serif}
+.scanring .pl{font-size:24px;color:#55555E;font-weight:600}
+.scanstat{text-align:center;margin-top:22px;font-size:28px;font-weight:600;color:#55555E}
+.scanres{margin:24px 26px 0;border-radius:22px;overflow:hidden;border:2px solid var(--rule)}
+.scanres .sr-h{display:flex;justify-content:space-evenly;background:var(--panel);padding:20px 0}
+.scanres .sr-h b{font-size:37px;font-family:"Noto Sans",sans-serif}
+.scanres .sr-h div{text-align:center;font-size:23px;color:#55555E;font-weight:600}
+.badrow{display:flex;align-items:center;gap:18px;padding:22px 24px;background:#FDECEC}
+.badrow .b-n{font-size:26px;font-weight:800;font-family:"Noto Sans",sans-serif}
+.badrow .b-d{font-size:23px;color:#B42318;font-weight:600;margin-top:4px}
+.delbtn{margin-left:auto;background:#B42318;color:#fff;border-radius:14px;padding:12px 22px;font-size:24px;font-weight:800}
+.deldone{position:absolute;left:0;right:0;top:880px;text-align:center;font-size:34px;font-weight:800;color:var(--safe)}
+
+/* S06 wifi */
+.wifiscr{position:absolute;inset:0;background:#fff}
+.wifirow .wname{font-size:29px;font-weight:700;font-family:"Noto Sans",sans-serif}
+.wifirow .wsub{font-size:23px;color:#8A8A93;margin-top:4px;font-weight:500}
+.wifibanner{position:absolute;left:18px;right:18px;top:96px;background:var(--ink);color:#fff;border-radius:24px;padding:24px 26px;
+  box-shadow:0 24px 60px rgba(0,0,0,.35);display:flex;gap:18px;align-items:flex-start}
+.wifibanner .wb-t{font-size:25px;font-weight:800}
+.wifibanner .wb-d{font-size:25px;line-height:1.5;margin-top:8px;font-weight:500}
+.wifipanel{position:absolute;left:0;right:0;bottom:0;top:420px;background:var(--panel);border-top-left-radius:36px;border-top-right-radius:36px;padding-top:10px}
+.wifipanel .wp-h{padding:24px 30px 10px;font-size:31px;font-weight:800}
+
+/* S07 password */
+.pwscr{position:absolute;inset:0;background:#fff}
+.notecard{margin:24px;background:#FFF8DC;border-radius:20px;padding:28px;border:2px solid #EFE3B0}
+.notecard .n-t{font-size:29px;font-weight:800}
+.notecard .n-l{font-size:27px;margin-top:16px;font-weight:500;color:#55555E}
+.notecard .n-l b{font-family:"Noto Sans",sans-serif;color:var(--ink)}
+.pwvault{margin:24px;background:var(--panel);border-radius:26px;padding:30px}
+.pwvault .v-site{display:flex;align-items:center;gap:18px}
+.pwvault .v-ic{width:76px;height:76px;border-radius:20px;background:#fff;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center}
+.pwvault .v-d{font-size:29px;font-weight:800;font-family:"Noto Sans",sans-serif}
+.pwvault .v-u{font-size:24px;color:#55555E;font-weight:600;margin-top:4px;font-family:"Noto Sans",sans-serif}
+.pwfield{margin-top:24px;background:#fff;border:2px solid var(--rule);border-radius:16px;height:84px;display:flex;align-items:center;
+  padding:0 24px;font-size:26px;font-weight:700;font-family:"Noto Sans",monospace;white-space:nowrap;overflow:hidden}
+.genbtn{margin-top:22px;height:80px;background:#fff;border:2px solid var(--magenta);color:var(--magenta);font-size:27px}
+.savebtn{margin-top:16px;height:88px;background:linear-gradient(90deg,var(--red),var(--magenta));color:#fff;font-size:29px}
+.pwsafe{position:absolute;left:0;right:0;top:900px;text-align:center}
+.pwsafe .ps-t{margin-top:18px;font-size:31px;font-weight:800;color:var(--safe)}
+
+/* S08 parental */
+.kidscr{position:absolute;inset:0;background:#fff}
+.profrow{display:flex;gap:22px;padding:24px 30px;border-bottom:2px solid #EFEFF3}
+.prof{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:24px;font-weight:700}
+.prof .pa{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:#fff}
+.prof.p1 .pa{background:var(--blue)}
+.prof.p2 .pa{background:var(--magenta);outline:5px solid #F8C8DF}
+.setrow{display:flex;align-items:center;gap:20px;padding:25px 30px;border-bottom:2px solid #EFEFF3}
+.setrow .s-ic{width:64px;height:64px;border-radius:18px;background:var(--panel);display:flex;align-items:center;justify-content:center}
+.setrow .s-t{font-size:26px;font-weight:700}
+.setrow .s-v{font-size:23px;color:#55555E;font-weight:600;margin-top:4px}
+.notif{position:absolute;left:18px;right:18px;background:var(--ink);color:#fff;border-radius:22px;padding:22px 26px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);display:flex;gap:16px;align-items:flex-start}
+.notif .nt-t{font-size:24px;font-weight:800}
+.notif .nt-d{font-size:24px;margin-top:6px;font-weight:500;line-height:1.45}
+
+/* S09 report */
+.repscr{position:absolute;inset:0;background:#fff}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 26px 0}
+.stat{background:var(--panel);border-radius:22px;padding:24px 26px}
+.stat .st-l{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;color:#55555E}
+.stat .st-v{margin-top:10px;font-size:64px;font-weight:800;font-family:"Noto Sans",sans-serif;line-height:1}
+.stat .st-u{font-size:22px;color:#8A8A93;font-weight:600;margin-top:6px}
+.repbars{margin:26px 26px 0}
+.rb{margin-bottom:20px}
+.rb .rb-l{display:flex;justify-content:space-between;font-size:24px;font-weight:600;color:#55555E;margin-bottom:8px}
+.rb .rb-track{height:18px;background:#EFEFF3;border-radius:9px;overflow:hidden}
+.rb .rb-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,var(--red),var(--magenta))}
+
+/* S10 insurance */
+.insscr{position:absolute;inset:0;background:#fff}
+.inscard{margin:24px 24px 0;background:linear-gradient(150deg,#17172B,#2A2A4A);border-radius:28px;padding:30px 32px;color:#fff;position:relative;overflow:hidden}
+.inscard .ic-l{font-size:25px;font-weight:600;opacity:.8}
+.inscard .ic-v{margin-top:8px;font-size:72px;font-weight:800;font-family:"Noto Sans",sans-serif;white-space:nowrap}
+.inscard .ic-v small{font-size:29px;font-weight:600;opacity:.75;font-family:"Noto Sans Thai",sans-serif}
+.inscard .shine{position:absolute;top:-50%;bottom:-50%;width:140px;background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);transform:rotate(12deg)}
+.insrow{display:flex;align-items:center;gap:18px;margin:16px 24px 0;background:var(--panel);border-radius:20px;padding:20px 24px}
+.insrow .ir-t{font-size:24px;font-weight:700;line-height:1.4}
+.insrow .ir-t .irn{font-size:19px;color:#8A8A93;font-weight:600}
+.insrow .ir-v{margin-left:auto;font-size:31px;font-weight:800;font-family:"Noto Sans",sans-serif;white-space:nowrap}
+.insfoot{margin:18px 24px 0;font-size:22px;color:#55555E;font-weight:600;line-height:1.5;text-align:center}
+.regbtn{margin:16px 24px 0;height:80px;background:linear-gradient(90deg,var(--red),var(--magenta));color:#fff;font-size:27px}
+
+.center{display:flex;align-items:center;justify-content:center}
+.ripple{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(46,111,217,.4);pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+/* ============================================================
+   TEXT LAYER — ทุกข้อความภาษาไทยอยู่ที่นี่ชั้นเดียว
+   (แยกเลเยอร์ตาม storyboard เผื่อทำเวอร์ชันอังกฤษภายหลัง)
+   ============================================================ */
+const T = {
+  brand:"ทรู ไซเบอร์เซฟ โปร",
+  sim:"สถานการณ์จำลอง",
+  beats:{b1:"ปัญหา", b2:"แอปทำอะไร", b3:"ผลลัพธ์"},
+  androidOnly:"ใช้ได้เฉพาะเครื่อง Android เท่านั้น",
+  in:{
+    name:"ทรู ไซเบอร์เซฟ โปร",
+    head:"ปกป้อง 10 อย่าง\nในแอปเดียว",
+    chip:"ปกป้องทั้งในและนอกเครือข่าย",
+    vo:"“ทรู ไซเบอร์เซฟ โปร ปกป้อง 10 อย่าง ในแอปเดียว มาดูทีละอย่าง”",
+  },
+  out:{
+    head:"สมัครยังไง",
+    sub:"3 ขั้นตอน เริ่มใช้ได้เลย",
+    s1t:"กด USSD สมัคร", s1d:"แพ็กทดลองใช้ ฟรีเดือนแรก",
+    s2t:"ดาวน์โหลดแอป", s2d:"App Store หรือ Play Store",
+    s3t:"ล็อกอิน", s3d:"ด้วยเบอร์ที่สมัคร หรือ True ID / True App",
+    ussd:"*900*7531#",
+    price:"เริ่มต้น 49 บาท/เดือน", price2:"ใช้ฟรีเดือนแรก",
+    close1:"True CyberSafe PRO",
+    close2:"ปกป้อง 9 ฟีเจอร์ ครบ จบ ในแอปเดียว พร้อมประกันภัยไซเบอร์",
+    vo:"“กด *900*7531# โหลดแอป แล้วล็อกอินด้วยเบอร์ที่สมัคร เริ่มต้น 49 บาทต่อเดือน ใช้ฟรีเดือนแรก”",
+    fine:"ราคายังไม่รวมภาษีมูลค่าเพิ่ม · ใช้ได้สูงสุดครั้งละ 1 อุปกรณ์ · รายการส่งเสริมการขาย 4 พ.ย. 2568 – 31 ธ.ค. 2570",
+  },
+  s01:{ th:"บล็อกสายเรียกเข้าอันตราย", en:"CALL AI FILTER", icon:"call", scam:true,
+    problem:"สายจากเบอร์แปลก อ้างเป็นเจ้าหน้าที่รัฐ ให้รีบรับสิทธิ์เงินก่อนหมด",
+    vo:"“เช็คทุกเบอร์ที่โทรเข้า ตั้งแต่ก่อนคุณกดรับ”",
+    result:"ผู้ใช้วางสาย ไม่เสียเงิน",
+    sticky:"ฐานข้อมูลจากภาครัฐ ตำรวจไซเบอร์ และ สกมช.",
+    num:"083 232 2163", inc:"สายเรียกเข้า", unknown:"ไม่รู้จัก · ประเทศไทย",
+    wcHead:"ทรู ไซเบอร์เซฟ โปร แจ้งเตือน",
+    wcBody:"เบอร์นี้อยู่ในฐานข้อมูลเสี่ยง แนะนำไม่รับสาย",
+    ended:"วางสายแล้ว" },
+  s02:{ th:"บล็อก SMS อันตราย", en:"SMS AI FILTER", icon:"sms", scam:true,
+    problem:"SMS อ้างว่าพัสดุติดปัญหา ให้กดลิงก์ยืนยันข้อมูล",
+    vo:"“กรอง SMS มิจฉาชีพ พร้อมบล็อกลิงก์ในข้อความ”",
+    result:"กดไม่เข้า ไม่ได้กรอกข้อมูล",
+    sticky:"กรองได้ทั้งเบอร์ ชื่อผู้ส่ง และคำที่กำหนดเอง",
+    num:"086 816 7447",
+    msg:"พัสดุของคุณติดปัญหาการจัดส่ง โปรดยืนยันข้อมูลเพื่อรับของ",
+    link:"parcel-th-verify.co/a8x2",
+    tag:"SMS เสี่ยงมิจฉาชีพ", lock:"ลิงก์ถูกบล็อก", fail:"กดไม่เข้า" },
+  s03:{ th:"บล็อกเบอร์และเว็บที่ไม่อยากรับเอง", en:"PERSONAL URL & CALL BLOCKING", icon:"ban",
+    problem:"บางเบอร์และบางเว็บกวนใจ แต่ระบบยังไม่ได้จัดว่าอันตราย",
+    vo:"“เบอร์ไหน เว็บไหน ไม่อยากรับ กำหนดเองได้”",
+    result:"ครั้งต่อไปถูกบล็อกอัตโนมัติ",
+    sticky:"Blacklist และ Whitelist ตั้งเองได้",
+    formTitle:"Block by number", formLabel:"เพิ่มเบอร์ที่ต้องการบล็อก",
+    input:"+66 080 111 1111",
+    reasons:["Fraud","Sales","Harassment"], sel:1,
+    btn:"เพิ่มลงรายการบล็อก",
+    toast:"เพิ่มแล้ว · ครั้งต่อไปบล็อกอัตโนมัติ",
+    calllab:"สายโฆษณา · วันนี้" },
+  s04:{ th:"บล็อกเว็บอันตราย", en:"WEB / URL PROTECTION", icon:"globe", scam:true,
+    problem:"กดโฆษณาสินเชื่อดอกเบี้ยต่ำ เข้าเว็บปลอมที่ขอข้อมูลส่วนตัว",
+    vo:"“บล็อกเว็บอันตรายก่อนคุณจะกรอกอะไรลงไป”",
+    result:"ไม่ได้กรอกข้อมูล ไม่ถูกขโมยตัวตน",
+    sticky:"แจ้งเตือนมากถึง 8 หมวดหมู่",
+    footnote:"บล็อกลิงก์อันตรายตามฐานข้อมูล เว็บสร้างใหม่ที่ระบบยังไม่พบอาจไม่ถูกบล็อก",
+    adSponsor:"โพสต์แนะนำ · Sponsored",
+    adText:"สินเชื่อดอกเบี้ยต่ำ อนุมัติไว ไม่ต้องมีสลิปเงินเดือน",
+    adImg:"กู้ง่าย ได้ไว", adCta:"ดูเพิ่มเติม",
+    url:"loan-fast-approve.co", notSecure:"Not Secure",
+    bpTitle:"ถูกบล็อก", bpEn:"BLOCKED",
+    bpDesc:"เว็บไซต์นี้ไม่ปลอดภัย และอาจเป็นเว็บไซต์ที่เป็นอันตราย",
+    bpBtn:"กลับสู่หน้าที่ปลอดภัย" },
+  s05:{ th:"สแกนหาแอปและไวรัสในเครื่อง", en:"DEVICE SCANNING", icon:"scan", scam:true, android:true,
+    problem:"เผลอเปิดไฟล์แนบจากอีเมลสมัครงานปลอม แอปแปลกถูกติดตั้งลงเครื่อง",
+    vo:"“สแกนหาไวรัสและแอปแปลกปลอมที่แอบติดตั้งในเครื่อง”",
+    result:"ลบแอปอันตรายออกได้ทันที",
+    mailFrom:"ฝ่ายบุคคล บริษัทจัดหางาน",
+    mailSub:"ตำแหน่งงานรายได้ดี เริ่มงานทันที",
+    apk:"ATZ_JobDetail.apk",
+    scanTitle:"Virus Scanning",
+    scanStat:"ตรวจไฟล์ 298 รายการ",
+    safeN:"5", safeL:"แอปปลอดภัย", badN:"1", badL:"ไม่ปลอดภัย",
+    badDesc:"ติดตั้งจากแหล่งที่ไม่รู้จัก",
+    del:"ลบทันที", delDone:"ลบแอปอันตรายแล้ว" },
+  s06:{ th:"เตือนเมื่อต่อไวไฟที่ไม่ปลอดภัย", en:"SAFE WI-FI", icon:"wifi",
+    problem:"ต่อไวไฟฟรีที่คาเฟ่หรือสนามบิน โดยไม่รู้ว่าใครเป็นเจ้าของ",
+    vo:"“ต่อไวไฟที่ไหน รู้ทันทีว่าปลอดภัยหรือไม่”",
+    result:"รู้ทันที ว่าไม่ควรทำธุรกรรมบนเครือข่ายนี้",
+    sticky:"ใช้ได้ทั้งในและนอกเครือข่าย และเมื่อไปต่างประเทศ",
+    settings:"Wi-Fi", net1:"Free_Cafe_WiFi", net1s:"เปิด · ไม่มีรหัสผ่าน",
+    net2:"Airport_Free", net2s:"เปิด · ไม่มีรหัสผ่าน",
+    connected:"เชื่อมต่อแล้ว",
+    wbT:"การป้องกันไวไฟ",
+    wbD:"ตรวจพบ Wi-Fi ที่ไม่ปลอดภัย เชื่อมต่อกับ Free_Cafe_WiFi แล้ว",
+    panelT:"การป้องกันไวไฟ",
+    tg1:"แจ้งเตือนไวไฟไม่ปลอดภัย", tg2:"ตรวจสอบเครือข่ายอัตโนมัติ" },
+  s07:{ th:"เก็บรหัสผ่านอย่างปลอดภัย", en:"PASSWORD STORAGE", icon:"key",
+    problem:"มีหลายบัญชี จำไม่ไหว เลยจดไว้ในโน้ตมือถือ และใช้รหัสเดียวกันทุกที่",
+    vo:"“สร้างและเก็บรหัสผ่านให้ปลอดภัย ไม่ต้องจดใส่โน้ตมือถืออีกต่อไป”",
+    result:"บัญชีหนึ่งหลุด บัญชีอื่นไม่หลุดตาม",
+    noteT:"รหัสของฉัน 📝",
+    notes:[["ธนาคาร","Sunny123"],["อีเมล","Sunny123"],["ช้อปปิ้ง","Sunny123"]],
+    vaultT:"Password Storage",
+    site:"bank-app.co.th", user:"TEST USER",
+    pw:"ChWk3G-5c9nFN-X3fbuv",
+    gen:"✨ Generate Password", save:"เพิ่มรหัสผ่านใหม่",
+    safe:"เก็บไว้ในที่เดียว ปลอดภัย" },
+  s08:{ th:"ดูแลการใช้เน็ตของลูก", en:"PARENTAL CONTROL", icon:"family",
+    problem:"ลูกเล่นมือถือดึก และเข้าเว็บที่ไม่เหมาะกับวัย",
+    vo:"“ตั้งเวลาและกรองเนื้อหาให้ลูก ได้จากเครื่องคุณ”",
+    result:"เครื่องลูกล็อกเองเมื่อครบเวลา และแจ้งเตือนเมื่อเข้าเว็บที่บล็อกไว้",
+    footnote:"1 แพ็กเกจ ใช้งานได้สูงสุดครั้งละ 1 อุปกรณ์",
+    appT:"Parental Control",
+    profiles:["พ่อ","ลูก"],
+    rows:[["App Control","เปิดใช้งาน","apps"],["Daily Time Limits","1 ชม./วัน","clock"],["Bedtime","20:00 – 06:00","moon"],["Content Filtering","กรอง 8 หมวด","filter"]],
+    n1t:"เครื่องลูกล็อกแล้ว", n1d:"ครบเวลาใช้งานประจำวัน (1 ชม.)",
+    n2t:"แจ้งเตือนผู้ปกครอง", n2d:"ลูกพยายามเข้าเว็บไซต์ที่ถูกบล็อกไว้",
+    late:"22:47" },
+  s09:{ th:"รายงานการปกป้องส่วนบุคคล", en:"PERSONAL REPORT", icon:"chart",
+    problem:"จ่ายเงินไปแล้ว แต่ไม่รู้ว่าแอปทำงานอยู่จริงหรือเปล่า",
+    vo:"“ดูได้ทุกเดือน ว่าปกป้องอะไรให้คุณไปแล้วบ้าง”",
+    result:"เห็นชัดว่าปกป้องอะไรให้ไปแล้วบ้าง",
+    sticky:"รายงานสายเรียกเข้า SMS เว็บไซต์ และไวไฟ ครบในที่เดียว",
+    appT:"รายงานเดือนนี้",
+    stats:[["การโทร",133,"call"],["ข้อความ",76,"sms"],["เบราว์เซอร์",83,"globe"],["ไวไฟ",89,"wifi"]],
+    unit:"รายการที่แจ้งเตือน",
+    bars:[["สายเรียกเข้า",133],["SMS",76],["เว็บไซต์",83],["ไวไฟ",89]] },
+  s10:{ th:"ประกันภัยไซเบอร์", en:"CYBER INSURANCE", icon:"umbrella",
+    problem:"ต่อให้ระวังแค่ไหน ก็ยังมีโอกาสพลาด",
+    vo:"“และถ้ายังพลาดจริง ยังมีประกันภัยไซเบอร์ คุ้มครองสูงสุด 30,000 บาทต่อเดือน”",
+    result:"ถ้าเสียเงินจริง มีตาข่ายรองรับสูงสุด 30,000 บาท/เดือน",
+    sticky:"ต้องลงทะเบียนรับสิทธิ์เอง · คุ้มครองเริ่ม 16.30 น. ของวันถัดไป · รอบละ 30 วัน · สัญชาติไทย อายุ 15–100 ปี",
+    footnote:"ทรูไม่ใช่ผู้รับประกันภัย · การเคลมติดต่อ กรุงเทพประกันภัย",
+    cardL:"ความคุ้มครองรวมสูงสุด",
+    cardV:"30,000", cardU:"บาท/เดือน",
+    r1:"ถูกโจรกรรมเงินทางอินเทอร์เน็ต", r1v:"20,000฿",
+    r2:"ซื้อของออนไลน์แล้วไม่ได้ของ", r2v:"10,000฿",
+    rNote:"จ่ายตามจริงสูงสุดต่อเดือน",
+    foot:"รับประกันโดย กรุงเทพประกันภัย (BKI)\nนายหน้า บริษัท ซันเดย์ อินส์ จำกัด",
+    reg:"ลงทะเบียนรับสิทธิ์" },
+};
+
+/* ============================================================ helpers */
+const C01=(v)=>Math.max(0,Math.min(1,v));
+const L=(a,b,p)=>a+(b-a)*p;
+const eoc=p=>1-Math.pow(1-p,3);
+const eio=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+const back=p=>{const c=1.70158;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+const seg=(t,t0,d,e=eoc)=>e(C01((t-t0)/d));
+const between=(t,a,b)=>t>=a&&t<b;
+const pulse=(t,f=1)=>0.5+0.5*Math.sin(t*f*Math.PI*2);
+
+function E(tag,cls,html){const el=document.createElement(tag);if(cls)el.className=cls;if(html!=null)el.innerHTML=html;return el;}
+function sh(el,o){el.style.opacity=o;el.style.visibility=o<=0.001?"hidden":"visible";}
+function tf(el,{x=0,y=0,s=1,r=0}={}){el.style.transform=`translate(${x}px,${y}px) scale(${s}) rotate(${r}deg)`;}
+function A(el,o,xf){sh(el,o);if(xf)tf(el,xf);}
+
+/* Feather-style stroke icons (MIT) */
+const PATHS={
+  call:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  sms:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  ban:'<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  scan:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  wifi:'<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  key:'<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>',
+  family:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  chart:'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+  umbrella:'<path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  shieldCheck:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 11.5 11.2 13.7 15.5 9.4"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  alert:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  mail:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  clip:'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+  bell:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  moon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  filter:'<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+  apps:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  bank:'<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+  wifiOff:'<line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+};
+function svg(name,size=32,color="#fff",sw=2){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${PATHS[name]||""}</svg>`;
+}
+
+/* ============================================================
+   TIMELINE  (seconds)
+   ============================================================ */
+const SCENES=[
+  {id:"in",  start:0,   end:8},
+  {id:"s01", start:8,   end:20},
+  {id:"s02", start:20,  end:32},
+  {id:"s03", start:32,  end:42},
+  {id:"s04", start:42,  end:54},
+  {id:"s05", start:54,  end:64},
+  {id:"s06", start:64,  end:74},
+  {id:"s07", start:74,  end:84},
+  {id:"s08", start:84,  end:94},
+  {id:"s09", start:94,  end:104},
+  {id:"s10", start:104, end:116},
+  {id:"out", start:116, end:125},
+];
+const TOTAL=125;
+const FADE=0.45;
+
+const stage=document.getElementById("stage");
+
+/* ---------- scene chrome builder for feature scenes ---------- */
+function featureScene(id,num,total,d){
+  const sc=E("section","scene");sc.id="sc-"+id;
+  const chrome=E("div","chrome");
+  chrome.append(
+    (()=>{const r=E("div","brandrow");
+      r.append(
+        (()=>{const b=E("div","brand");
+          b.append(E("div","bicon",svg("shield",34,"#fff",2.2)),E("div","bname",T.brand));return b;})(),
+        E("div","scnum",`<b>${num}</b> / ${total}`)
+      );return r;})(),
+    (()=>{const tb=E("div","titleblock");
+      tb.append(E("div","t-th",d.th),E("div","t-en",d.en));return tb;})(),
+    (()=>{const br=E("div","beatrow");
+      br.append(
+        E("div","beat b1",`<span class="bdot"></span>${T.beats.b1}`),
+        E("div","beat b2",`<span class="bdot"></span>${T.beats.b2}`),
+        E("div","beat b3",`<span class="bdot"></span>${T.beats.b3}`));
+      return br;})()
+  );
+  sc.append(chrome);
+  if(d.scam) sc.append(E("div","simchip",T.sim));
+  const pw=E("div","phonewrap");
+  const phone=E("div","phone");
+  const screenEl=E("div","screen");
+  phone.append(screenEl,E("div","notch"));
+  if(d.android) phone.append(E("div","androidnote","⚠ "+T.androidOnly));
+  pw.append(phone);
+  sc.append(pw);
+  const cap=E("div","caption");cap.append(E("div","cap-line"));sc.append(cap);
+  if(d.sticky){const st=E("div","sticky",`<span class="in">${d.sticky}</span>`);sc.append(st);}
+  if(d.footnote){sc.append(E("div","footnote",d.footnote));}
+  const fc=E("div","fcard");
+  fc.append(E("div","fic",svg(d.icon,60,"#fff",2)),
+    (()=>{const w=E("div");
+      w.append(E("div","fth",d.th),E("div","fen",d.en),
+        E("div","fok",`${svg("check",28,"#12A150",3)} ${d.result}`));
+      return w;})());
+  sc.append(fc);
+  stage.append(sc);
+  return {sc,screen:screenEl,phone,pw};
+}
+function statusbar(dark=false,time="09:41"){
+  const c=dark?"#fff":"#141416";
+  return `<div class="statusbar" style="color:${c}"><span>${time}</span><span class="sr">${svg("wifi",24,c,2.4)} ▮▮▮</span></div>`;
+}
+/* shared chrome animation (beats, caption, sticky, freeze card) */
+function chromeAnim(refs,d,local,D){
+  const sc=refs.sc;
+  const b1=3, b3s=D-3;
+  const q=(s)=>sc.querySelector(s);
+  // beat chips
+  const chips=[q(".beat.b1"),q(".beat.b2"),q(".beat.b3")];
+  const bAct=local<b1?0:(local<b3s?1:2);
+  chips.forEach((ch,i)=>{
+    const on=i===bAct;
+    A(ch,on?1:0,{y:on?0:14});
+  });
+  // caption text per beat
+  const cap=q(".cap-line");
+  let txt,capCol;
+  if(bAct===0){txt=d.problem;capCol="#B42318";}
+  else if(bAct===1){txt=d.vo;capCol="var(--ink)";}
+  else {txt=d.result;capCol="var(--safe)";}
+  if(cap.textContent!==txt)cap.textContent=txt;
+  cap.style.color=capCol;
+  const capStart=bAct===0?0.25:(bAct===1?b1:b3s);
+  A(cap,seg(local,capStart,0.4),{y:L(16,0,seg(local,capStart,0.4))});
+  // sticky from beat2 onward
+  const st=q(".sticky");
+  if(st)A(st,seg(local,b1+0.5,0.5),{y:L(20,0,seg(local,b1+0.5,0.5))});
+  const fn=q(".footnote");
+  if(fn)A(fn,seg(local,b1+0.7,0.5));
+  // freeze card at beat3
+  const fc=q(".fcard");
+  const p=seg(local,b3s,0.55,back);
+  A(fc,seg(local,b3s,0.3),{y:L(120,0,p),s:L(0.92,1,p)});
+  // title entrance
+  const tb=q(".titleblock");
+  A(tb,seg(local,0.05,0.5),{y:L(20,0,seg(local,0.05,0.5))});
+  // phone entrance
+  A(refs.pw,seg(local,0.1,0.6),{x:-267,y:L(60,0,seg(local,0.1,0.6))});
+  refs.pw.style.left="50%";
+  // sim chip pulse subtly
+  const sim=sc.querySelector(".simchip");
+  if(sim)A(sim,1);
+  const an=sc.querySelector(".androidnote");
+  if(an)A(an,1);
+  return {b1,b3s,bAct};
+}
+
+/* ============================================================ IN scene */
+(function(){
+  const sc=E("section","scene");sc.id="sc-in";
+  const w=E("div","inwrap");
+  w.append(E("div","shield",svg("shieldCheck",300,"#fff",1.6)));
+  sc.append(w);
+  const ring=E("div","ring");sc.append(ring);
+  const orbIcons=["call","sms","ban","globe","scan","wifi","key","family","chart","umbrella"];
+  const orbs=orbIcons.map(n=>{const o=E("div","orb",svg(n,56,"#fff",2));sc.append(o);return o;});
+  w.append(
+    E("div","in-name",T.in.name),
+    E("div","in-head",T.in.head.replace("\n","<br>")),
+    E("div","in-chip",T.in.chip),
+  );
+  sc.append(E("div","in-vo",T.in.vo));
+  stage.append(sc);
+  sc._anim=(local,D)=>{
+    const shield=sc.querySelector(".shield");
+    const pIn=seg(local,0.2,0.9,back);
+    A(shield,seg(local,0.2,0.5),{y:L(160,0,pIn),s:L(0.5,1,pIn)});
+    const rp=seg(local,0.9,0.9);
+    A(ring,rp*0.9,{s:L(0.5,1.55,rp)});
+    ring.style.borderColor=`rgba(255,255,255,${0.55*(1-rp)+0.15})`;
+    const R=330;
+    orbs.forEach((o,i)=>{
+      const ang=(i/orbs.length)*Math.PI*2-Math.PI/2;
+      const p=seg(local,1.0+i*0.07,0.8,back);
+      const fl=Math.sin((local*0.9+i)*Math.PI*2/3)*8;
+      A(o,seg(local,1.0+i*0.07,0.4),{x:Math.cos(ang)*R*p,y:Math.sin(ang)*R*p+fl*p,s:L(0.3,1,p)});
+    });
+    A(sc.querySelector(".in-name"),seg(local,1.6,0.5),{y:L(24,0,seg(local,1.6,0.5))});
+    A(sc.querySelector(".in-head"),seg(local,1.9,0.6),{y:L(30,0,seg(local,1.9,0.6))});
+    A(sc.querySelector(".in-chip"),seg(local,2.5,0.5),{y:L(20,0,seg(local,2.5,0.5))});
+    A(sc.querySelector(".in-vo"),seg(local,2.9,0.6));
+  };
+})();
+
+/* ============================================================ S01 CALL */
+(function(){
+  const d=T.s01;
+  const refs=featureScene("s01","01","10",d);
+  refs.screen.innerHTML=`<div class="callscr">
+    ${statusbar(true)}
+    <div class="cs-inc">${d.inc}…</div>
+    <div class="avatar"><div class="av-ring"></div>?</div>
+    <div class="cs-num">${d.num}</div>
+    <div class="cs-lab">${d.unknown}</div>
+    <div class="warncard">
+      <div class="wc-head">${svg("shield",30,"#FF0000",2.4)} ${d.wcHead}</div>
+      <div class="wc-body">⚠ ${d.wcBody}</div>
+    </div>
+    <div class="ended">${d.ended}</div>
+    <div class="cs-actions">
+      <div class="cbtn dec">${svg("x",56,"#fff",3)}</div>
+      <div class="cbtn acc">${svg("call",52,"#fff",2.4)}</div>
+    </div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    const ringing=local<b3s;
+    // avatar ring pulse while ringing
+    const av=q(".av-ring");
+    if(ringing){const p=pulse(local,1.1);A(av,0.7-0.5*p,{s:L(1,1.28,p)});}
+    else A(av,0);
+    // accept button bobs while ringing
+    tf(q(".acc"),{y:ringing?Math.sin(local*Math.PI*2*1.6)*6:0});
+    // warning card slides up during beat2
+    const wp=seg(local,b1,0.7,back);
+    const wc=q(".warncard");
+    A(wc,seg(local,b1,0.35),{y:L(340,0,wp),s:L(0.95,1,wp)});
+    if(between(local,b1,b3s)){
+      const gp=pulse(local-b1,0.9);
+      wc.style.boxShadow=`0 24px 60px rgba(0,0,0,.45),0 0 ${L(0,44,gp)}px rgba(255,0,0,.45)`;
+    } else wc.style.boxShadow="0 24px 60px rgba(0,0,0,.45)";
+    // beat3: decline pressed, call ends
+    const dp=seg(local,b3s,0.3);
+    tf(q(".dec"),{s:L(1,dp>0&&dp<1?0.85:1,dp>0.5?1-dp:dp)});
+    const dim=seg(local,b3s+0.25,0.5);
+    q(".callscr").style.filter=`brightness(${L(1,0.55,dim)})`;
+    A(q(".ended"),seg(local,b3s+0.35,0.4));
+    A(q(".cs-actions"),1-dim);
+    A(wc,(seg(local,b1,0.35))*(1-dim*0.6),undefined);
+  };
+})();
+
+/* ============================================================ S02 SMS */
+(function(){
+  const d=T.s02;
+  const refs=featureScene("s02","02","10",d);
+  refs.screen.innerHTML=`<div class="smsscr">
+    ${statusbar()}
+    <div class="apphead">
+      <div style="width:60px;height:60px;border-radius:50%;background:#F0F0F5" class="center">${svg("sms",30,"#8A8A93",2)}</div>
+      <div><div class="ah-t" style="font-family:'Noto Sans',sans-serif">${d.num}</div><div class="ah-s">SMS</div></div>
+    </div>
+    <div class="bubble">
+      <div class="smstag">⚠ ${d.tag}</div>
+      <div class="bb-t">${d.msg}</div>
+      <div class="bb-link">http://${d.link}</div>
+      <div class="ripple" style="left:180px;top:150px"></div>
+    </div>
+    <div class="linkblock">${svg("lock",28,"#B42318",2.4)} ${d.lock}</div>
+    <div class="tapfail">${d.fail}</div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // bubble arrives
+    const bp=seg(local,0.3,0.6,back);
+    const bub=q(".bubble");
+    A(bub,seg(local,0.3,0.35),{y:L(60,0,bp),s:L(0.9,1,bp)});
+    // tag stamps in at beat2
+    const tp=seg(local,b1+0.2,0.5,back);
+    A(q(".smstag"),seg(local,b1+0.2,0.3),{s:L(1.8,1,tp),r:L(-6,-2,tp)});
+    // link becomes blocked
+    if(local>b1+0.7)bub.classList.add("blocked");else bub.classList.remove("blocked");
+    const lp=seg(local,b1+0.8,0.5,back);
+    A(q(".linkblock"),seg(local,b1+0.8,0.35),{y:L(30,0,lp)});
+    // beat3: tap attempt fails — ripple + shake + toast
+    const rp=seg(local,b3s,0.55);
+    const rip=q(".ripple");
+    A(rip,rp>0?(1-rp)*0.8:0,{s:L(0.3,2.6,rp)});
+    const shk=seg(local,b3s+0.3,0.6);
+    const sx=shk>0&&shk<1?Math.sin(shk*Math.PI*6)*(1-shk)*14:0;
+    tf(bub,{x:sx,y:0,s:1});
+    A(q(".tapfail"),seg(local,b3s+0.5,0.4),{y:L(16,0,seg(local,b3s+0.5,0.4))});
+  };
+})();
+
+/* ============================================================ S03 PERSONAL BLOCK */
+(function(){
+  const d=T.s03;
+  const refs=featureScene("s03","03","10",d);
+  const rows=[1,2,3].map(i=>`
+    <div class="listrow callogrow">
+      <div class="ic">${svg("call",28,"#B42318",2.2)}</div>
+      <div><div style="font-size:28px;font-weight:700;font-family:'Noto Sans',sans-serif">${d.input}</div>
+      <div style="font-size:22px;color:#B42318;font-weight:600;margin-top:4px">${d.calllab} · ${9+i}:1${i}</div></div>
+      <div style="margin-left:auto;color:#8A8A93">${svg("call",24,"#8A8A93",2)}</div>
+    </div>`).join("");
+  refs.screen.innerHTML=`<div class="blockscr">
+    ${statusbar()}
+    <div class="apphead"><div class="ah-t">สายที่ผ่านมา</div></div>
+    <div class="calllog">${rows}</div>
+    <div class="formwrap" style="position:absolute;left:0;right:0;bottom:0;top:170px;background:#fff;border-top-left-radius:36px;border-top-right-radius:36px;box-shadow:0 -20px 60px rgba(20,20,22,.14)">
+      <div style="width:70px;height:8px;border-radius:4px;background:var(--rule);margin:18px auto 0"></div>
+      <div class="apphead" style="border-bottom:none;padding-bottom:0"><div>
+        <div class="ah-t" style="font-family:'Noto Sans',sans-serif">${d.formTitle}</div>
+        <div class="ah-s">${d.formLabel}</div></div></div>
+      <div class="formbox">
+        <div class="fb-l">เบอร์โทรศัพท์ / URL</div>
+        <div class="forminput"><span class="fi-txt"></span><span class="caret"></span></div>
+        <div class="fb-l" style="margin-top:22px">เหตุผล</div>
+        <div class="reasons">${d.reasons.map((r,i)=>`<div class="rchip" data-i="${i}">${r}</div>`).join("")}</div>
+        <div class="appbtn addbtn">${d.btn}</div>
+      </div>
+      <div class="toast">${svg("check",30,"#12A150",3)} ${d.toast}</div>
+    </div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // call log rows stagger in beat1
+    refs.screen.querySelectorAll(".callogrow").forEach((r,i)=>{
+      const p=seg(local,0.25+i*0.22,0.45);
+      A(r,p,{y:L(26,0,p)});
+    });
+    // form sheet slides up at beat2
+    const fp=seg(local,b1,0.65,eio);
+    const fw=q(".formwrap");
+    A(fw,1,{y:L(760,0,fp)});
+    // typing
+    const typ=seg(local,b1+0.7,1.6,p=>p);
+    q(".fi-txt").textContent=d.input.slice(0,Math.round(d.input.length*typ));
+    q(".caret").style.opacity=(local<b3s&&local>b1+0.5)?(pulse(local,2)>0.5?1:0):0;
+    // reason chip select
+    const chips=refs.screen.querySelectorAll(".rchip");
+    chips.forEach((c,i)=>{
+      const on=i===d.sel&&local>b1+2.7;
+      c.classList.toggle("sel",on);
+      tf(c,{s:on&&local<b1+3.1?L(1,1.08,pulse(seg(local,b1+2.7,0.4),1)):1});
+    });
+    // button press
+    const bp=seg(local,b1+3.4,0.35);
+    tf(q(".addbtn"),{s:bp>0&&bp<1?L(1,0.95,Math.sin(bp*Math.PI)):1});
+    // toast at beat3
+    const tp=seg(local,b3s,0.5,back);
+    A(q(".toast"),seg(local,b3s,0.3),{y:L(90,0,tp)});
+  };
+})();
+
+/* ============================================================ S04 WEB */
+(function(){
+  const d=T.s04;
+  const refs=featureScene("s04","04","10",d);
+  refs.screen.innerHTML=`<div class="webscr">
+    ${statusbar()}
+    <div class="feedview" style="position:absolute;inset:0;top:78px;background:var(--panel)">
+      <div class="feedcard">
+        <div class="feedhead">
+          <div class="flogo"></div>
+          <div><div class="fn">FastLoan Center</div><div class="fs">${d.adSponsor}</div></div>
+        </div>
+        <div class="adbody">${d.adText}</div>
+        <div class="adimg">${d.adImg} →</div>
+        <div class="appbtn adcta">${d.adCta}</div>
+        <div class="ripple" style="left:230px;top:560px"></div>
+      </div>
+    </div>
+    <div class="browser" style="position:absolute;inset:0;top:78px;background:#fff">
+      <div class="urlbar">${svg("alert",26,"#B42318",2.4)} <span class="ns">${d.notSecure}</span> — <span style="font-weight:700">${d.url}</span></div>
+      <div class="loadbar" style="height:6px;background:var(--blue);width:0;margin-top:14px"></div>
+      <div class="blockpage">
+        <div class="bp-ic">${svg("alert",150,"#fff",1.8)}</div>
+        <div class="bp-t">${d.bpTitle}</div>
+        <div class="bp-e">${d.bpEn}</div>
+        <div class="bp-d">${d.bpDesc}</div>
+        <div class="bp-b">${d.bpBtn}</div>
+      </div>
+    </div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // beat1: feed + tap
+    const feed=q(".feedview");
+    const rp=seg(local,1.6,0.6);
+    A(q(".ripple"),rp>0?(1-rp)*0.8:0,{s:L(0.3,2.4,rp)});
+    // browser slides in at end of beat1
+    const brp=seg(local,b1-0.3,0.55,eio);
+    const br=q(".browser");
+    A(br,brp>0?1:0,{x:L(540,0,brp)});
+    A(feed,1);
+    // load bar advances then blocked page snaps in
+    const lp=seg(local,b1+0.3,0.9,p=>p);
+    q(".loadbar").style.width=(lp*62)+"%";
+    const bp=seg(local,b1+1.3,0.5,back);
+    const bpg=q(".blockpage");
+    A(bpg,seg(local,b1+1.3,0.28),{y:L(120,0,bp),s:L(0.97,1,bp)});
+    // warning icon pulse
+    const wi=q(".bp-ic");
+    if(local>b1+1.8&&local<b3s)tf(wi,{s:L(1,1.07,pulse(local,0.8))});
+    else tf(wi,{s:1});
+    // beat3 keeps blocked page; slight settle
+    q(".loadbar").style.opacity=bp>0?0:1;
+  };
+})();
+
+/* ============================================================ S05 SCAN */
+(function(){
+  const d=T.s05;
+  const refs=featureScene("s05","05","10",d);
+  const RING_R=120,CIRC=2*Math.PI*RING_R;
+  refs.screen.innerHTML=`<div class="scanscr">
+    ${statusbar()}
+    <div class="mailview" style="position:absolute;inset:0;top:78px;background:#fff">
+      <div class="apphead"><div class="ah-t">กล่องจดหมาย</div></div>
+      <div class="mailrow">
+        <div class="m-f">${d.mailFrom}</div>
+        <div class="m-s">${d.mailSub}</div>
+        <div class="attach">${svg("clip",26,"#55555E",2.2)} ${d.apk}</div>
+      </div>
+      <div class="notif" style="top:520px">${svg("alert",34,"#F59E0B",2.2)}<div>
+        <div class="nt-t">ติดตั้งแอปใหม่แล้ว</div><div class="nt-d">${d.apk} · ${d.badDesc}</div></div>
+      </div>
+    </div>
+    <div class="scanview" style="position:absolute;inset:0;top:78px;background:#fff">
+      <div class="apphead"><div class="ah-t" style="font-family:'Noto Sans',sans-serif">${d.scanTitle}</div></div>
+      <div class="scanring">
+        <svg width="300" height="300">
+          <circle cx="150" cy="150" r="${RING_R}" stroke="#EFEFF3" stroke-width="20" fill="none"/>
+          <circle class="ringfill" cx="150" cy="150" r="${RING_R}" stroke="#E5007D" stroke-width="20" fill="none"
+            stroke-linecap="round" stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC}"/>
+        </svg>
+        <div class="pct"><div class="pv">0%</div></div>
+      </div>
+      <div class="scanstat">${d.scanStat} · <span class="filesn">0</span> / 298</div>
+      <div class="scanres">
+        <div class="sr-h">
+          <div><b style="color:var(--safe)">${d.safeN}</b><br>${d.safeL}</div>
+          <div><b style="color:#B42318">${d.badN}</b><br>${d.badL}</div>
+        </div>
+        <div class="badrow">
+          ${svg("alert",40,"#B42318",2.2)}
+          <div><div class="b-n">${d.apk}</div><div class="b-d">${d.badDesc}</div></div>
+          <div class="delbtn">${d.del}</div>
+        </div>
+      </div>
+      <div class="deldone">${svg("check",34,"#12A150",3)} ${d.delDone}</div>
+    </div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // beat1 mail + notif
+    const nf=q(".notif");
+    const np=seg(local,1.2,0.6,back);
+    A(nf,seg(local,1.2,0.35),{y:L(60,0,np)});
+    // scan view slides at beat2
+    const sp=seg(local,b1,0.55,eio);
+    A(q(".scanview"),sp>0?1:0,{x:L(540,0,sp)});
+    // ring + counters
+    const scn=seg(local,b1+0.5,2.2,eio);
+    q(".ringfill").style.strokeDashoffset=CIRC*(1-scn);
+    const filesDone=Math.round(scn*298);
+    q(".pv").textContent=Math.round(filesDone/298*100)+"%";
+    q(".filesn").textContent=filesDone;
+    // results appear
+    const rp=seg(local,b1+2.9,0.5,back);
+    A(q(".scanres"),seg(local,b1+2.9,0.3),{y:L(60,0,rp)});
+    // beat3: delete
+    const dp=seg(local,b3s,0.35);
+    tf(q(".delbtn"),{s:dp>0&&dp<1?L(1,0.9,Math.sin(dp*Math.PI)):1});
+    const gone=seg(local,b3s+0.35,0.5,eio);
+    const badr=q(".badrow");
+    A(badr,1-gone,{x:L(0,420,gone)});
+    A(q(".deldone"),seg(local,b3s+0.8,0.4),{y:L(16,0,seg(local,b3s+0.8,0.4))});
+  };
+})();
+
+/* ============================================================ S06 WIFI */
+(function(){
+  const d=T.s06;
+  const refs=featureScene("s06","06","10",d);
+  refs.screen.innerHTML=`<div class="wifiscr">
+    ${statusbar()}
+    <div class="apphead"><div class="ah-t">${d.settings}</div></div>
+    <div class="listrow wifirow r1">
+      ${svg("wifi",36,"#55555E",2.2)}
+      <div><div class="wname">${d.net1}</div><div class="wsub w1sub">${d.net1s}</div></div>
+      <div class="conn" style="margin-left:auto;color:var(--safe);font-weight:700;font-size:23px">✓ ${d.connected}</div>
+    </div>
+    <div class="listrow wifirow">
+      ${svg("wifi",36,"#B9B9C6",2.2)}
+      <div><div class="wname" style="color:#8A8A93">${d.net2}</div><div class="wsub">${d.net2s}</div></div>
+    </div>
+    <div class="wifipanel">
+      <div class="wp-h">${d.panelT}</div>
+      <div class="togglerow"><div class="tglab">${d.tg1}</div><div class="toggle t1"><div class="knob"></div></div></div>
+      <div class="togglerow"><div class="tglab">${d.tg2}</div><div class="toggle t2"><div class="knob"></div></div></div>
+    </div>
+    <div class="wifibanner">
+      ${svg("wifiOff",40,"#FF6B6B",2.2)}
+      <div><div class="wb-t">⚠ ${d.wbT}</div><div class="wb-d">${d.wbD}</div></div>
+    </div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // beat1: connecting
+    const cn=q(".conn");
+    A(cn,seg(local,1.6,0.4),{s:L(0.7,1,seg(local,1.6,0.5,back))});
+    q(".w1sub").textContent=local<1.6?d.net1s:d.net1s;
+    // banner drops at beat2
+    const bp=seg(local,b1,0.6,back);
+    A(q(".wifibanner"),seg(local,b1,0.3),{y:L(-160,0,bp)});
+    // panel rises + toggles flip
+    const pp=seg(local,b1+0.7,0.6,eio);
+    A(q(".wifipanel"),1,{y:L(660,0,pp)});
+    q(".t1").classList.toggle("on",local>b1+1.5);
+    q(".t2").classList.toggle("on",local>b1+1.9);
+    // beat3: banner glow reminder
+    const wb=q(".wifibanner");
+    if(local>b3s)wb.style.boxShadow=`0 24px 60px rgba(0,0,0,.35),0 0 ${L(0,36,pulse(local,0.8))}px rgba(255,0,0,.35)`;
+    else wb.style.boxShadow="0 24px 60px rgba(0,0,0,.35)";
+  };
+})();
+
+/* ============================================================ S07 PASSWORD */
+(function(){
+  const d=T.s07;
+  const refs=featureScene("s07","07","10",d);
+  refs.screen.innerHTML=`<div class="pwscr">
+    ${statusbar()}
+    <div class="noteview" style="position:absolute;inset:0;top:78px;background:#fff">
+      <div class="apphead"><div class="ah-t">โน้ต</div></div>
+      <div class="notecard">
+        <div class="n-t">${d.noteT}</div>
+        ${d.notes.map(n=>`<div class="n-l">${n[0]}: <b>${n[1]}</b></div>`).join("")}
+        <div class="n-l" style="color:#B42318;font-weight:700;margin-top:20px">⚠ รหัสเดียวกันทุกที่</div>
+      </div>
+    </div>
+    <div class="vaultview" style="position:absolute;inset:0;top:78px;background:#fff">
+      <div class="apphead"><div class="ah-t" style="font-family:'Noto Sans',sans-serif">${d.vaultT}</div></div>
+      <div class="pwvault">
+        <div class="v-site">
+          <div class="v-ic">${svg("bank",40,"#2E6FD9",2)}</div>
+          <div><div class="v-d">${d.site}</div><div class="v-u">${d.user}</div></div>
+        </div>
+        <div class="pwfield"><span class="pw-txt"></span></div>
+        <div class="appbtn genbtn">${d.gen}</div>
+        <div class="appbtn savebtn">${d.save}</div>
+      </div>
+      <div class="pwsafe">${svg("lock",64,"#12A150",2)} <div class="ps-t">${d.safe}</div></div>
+    </div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    const vp=seg(local,b1,0.55,eio);
+    A(q(".vaultview"),vp>0?1:0,{x:L(540,0,vp)});
+    // generate press then password scrambles in
+    const gp=seg(local,b1+0.6,0.35);
+    tf(q(".genbtn"),{s:gp>0&&gp<1?L(1,0.94,Math.sin(gp*Math.PI)):1});
+    const tp=seg(local,b1+1.0,1.6,p=>p);
+    const full=d.pw;
+    const n=Math.round(full.length*tp);
+    // scramble effect: revealed prefix + rotating fake chars for next 3
+    let s=full.slice(0,n);
+    if(n<full.length&&tp>0){
+      const pool="abcXYZ239kM";
+      for(let i=0;i<Math.min(3,full.length-n);i++)
+        s+=pool[Math.floor((local*17+i*5)%pool.length)];
+    }
+    q(".pw-txt").textContent=s;
+    // save press
+    const sp2=seg(local,b1+3.0,0.35);
+    tf(q(".savebtn"),{s:sp2>0&&sp2<1?L(1,0.95,Math.sin(sp2*Math.PI)):1});
+    // beat3: lock
+    const lp=seg(local,b3s,0.5,back);
+    A(q(".pwsafe"),seg(local,b3s,0.3),{y:L(30,0,lp),s:L(0.9,1,lp)});
+  };
+})();
+
+/* ============================================================ S08 PARENTAL */
+(function(){
+  const d=T.s08;
+  const refs=featureScene("s08","08","10",d);
+  refs.screen.innerHTML=`<div class="kidscr">
+    ${statusbar(false,"22:47")}
+    <div class="apphead"><div class="ah-t" style="font-family:'Noto Sans',sans-serif">${d.appT}</div></div>
+    <div class="profrow">
+      <div class="prof p1"><div class="pa">${d.profiles[0].slice(0,1)}</div>${d.profiles[0]}</div>
+      <div class="prof p2"><div class="pa">${d.profiles[1].slice(0,1)}</div>${d.profiles[1]}</div>
+    </div>
+    <div class="setlist">
+      ${d.rows.map(r=>`<div class="setrow">
+        <div class="s-ic">${svg(r[2],32,"#E5007D",2.2)}</div>
+        <div><div class="s-t" style="font-family:'Noto Sans',sans-serif">${r[0]}</div><div class="s-v">${r[1]}</div></div>
+        <div class="toggle on" style="margin-left:auto"><div class="knob"></div></div>
+      </div>`).join("")}
+    </div>
+    <div class="notif nf1" style="bottom:150px">${svg("lock",34,"#7ED4A8",2.2)}<div>
+      <div class="nt-t">${d.n1t}</div><div class="nt-d">${d.n1d}</div></div></div>
+    <div class="notif nf2" style="bottom:20px">${svg("bell",34,"#F8B4D4",2.2)}<div>
+      <div class="nt-t">${d.n2t}</div><div class="nt-d">${d.n2d}</div></div></div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // beat1: profiles pop
+    refs.screen.querySelectorAll(".prof").forEach((p,i)=>{
+      const pp=seg(local,0.4+i*0.3,0.5,back);
+      A(p,seg(local,0.4+i*0.3,0.3),{s:L(0.7,1,pp)});
+    });
+    // beat2: setting rows stagger + toggles
+    refs.screen.querySelectorAll(".setrow").forEach((r,i)=>{
+      const p=seg(local,b1+0.2+i*0.45,0.5);
+      A(r,p,{x:L(60,0,p)});
+      const tg=r.querySelector(".toggle");
+      tg.classList.toggle("on",local>b1+0.55+i*0.45);
+    });
+    // notifications slide up at end of beat2 so they are readable before the freeze card
+    const n1=seg(local,b3s-1.7,0.5,back);
+    A(q(".nf1"),seg(local,b3s-1.7,0.3),{y:L(90,0,n1)});
+    const n2=seg(local,b3s-1.0,0.5,back);
+    A(q(".nf2"),seg(local,b3s-1.0,0.3),{y:L(90,0,n2)});
+  };
+})();
+
+/* ============================================================ S09 REPORT */
+(function(){
+  const d=T.s09;
+  const refs=featureScene("s09","09","10",d);
+  refs.screen.innerHTML=`<div class="repscr">
+    ${statusbar()}
+    <div class="apphead"><div class="ah-t">${d.appT}</div><div class="ah-s" style="margin-left:auto">ทุกเดือน</div></div>
+    <div class="statgrid">
+      ${d.stats.map(s=>`<div class="stat">
+        <div class="st-l">${svg(s[2],26,"#E5007D",2.2)} ${s[0]}</div>
+        <div class="st-v" data-v="${s[1]}">0</div>
+        <div class="st-u">${d.unit}</div>
+      </div>`).join("")}
+    </div>
+    <div class="repbars">
+      ${d.bars.map(b=>`<div class="rb">
+        <div class="rb-l"><span>${b[0]}</span><span class="rb-v" data-v="${b[1]}" style="font-family:'Noto Sans',sans-serif;font-weight:800;color:var(--ink)">0</span></div>
+        <div class="rb-track"><div class="rb-fill" data-v="${b[1]}"></div></div>
+      </div>`).join("")}
+    </div>
+  </div>`;
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // beat1: cards appear empty
+    refs.screen.querySelectorAll(".stat").forEach((s,i)=>{
+      const p=seg(local,0.3+i*0.18,0.5,back);
+      A(s,seg(local,0.3+i*0.18,0.3),{y:L(40,0,p),s:L(0.94,1,p)});
+    });
+    // beat2: numbers count up
+    const cp=seg(local,b1+0.2,2.2,eio);
+    refs.screen.querySelectorAll(".st-v").forEach(el=>{
+      el.textContent=Math.round(parseInt(el.dataset.v)*cp);
+    });
+    refs.screen.querySelectorAll(".rb").forEach((rb,i)=>{
+      const p=seg(local,b1+0.6+i*0.3,0.5);
+      A(rb,p,{x:L(40,0,p)});
+    });
+    const bp2=seg(local,b1+1.0,1.8,eio);
+    const max=133;
+    refs.screen.querySelectorAll(".rb-fill").forEach(f=>{
+      f.style.width=(parseInt(f.dataset.v)/max*100*bp2)+"%";
+    });
+    refs.screen.querySelectorAll(".rb-v").forEach(el=>{
+      el.textContent=Math.round(parseInt(el.dataset.v)*bp2);
+    });
+  };
+})();
+
+/* ============================================================ S10 INSURANCE */
+(function(){
+  const d=T.s10;
+  const refs=featureScene("s10","10","10",d);
+  refs.screen.innerHTML=`<div class="insscr">
+    ${statusbar()}
+    <div class="apphead"><div class="ah-t">ประกันภัยไซเบอร์</div></div>
+    <div class="inscard">
+      <div class="shine"></div>
+      <div class="ic-l">🛡️ ${d.cardL}</div>
+      <div class="ic-v"><span class="ins-n">0</span> <small>${d.cardU}</small></div>
+    </div>
+    <div class="insrow r1">${svg("bank",40,"#2E6FD9",2)}<div class="ir-t">${d.r1}<br><span class="irn">${d.rNote}</span></div><div class="ir-v">${d.r1v}</div></div>
+    <div class="insrow r2">${svg("umbrella",40,"#E5007D",2)}<div class="ir-t">${d.r2}<br><span class="irn">${d.rNote}</span></div><div class="ir-v">${d.r2v}</div></div>
+    <div class="insfoot">${d.foot.replace("\n","<br>")}</div>
+    <div class="appbtn regbtn">${d.reg}</div>
+  </div>`;
+  const q=s=>refs.screen.querySelector(s);
+  refs.sc._anim=(local,D)=>{
+    const {b1,b3s}=chromeAnim(refs,d,local,D);
+    // beat1: card appears muted
+    const cp=seg(local,0.4,0.6,back);
+    A(q(".inscard"),seg(local,0.4,0.35),{y:L(50,0,cp),s:L(0.95,1,cp)});
+    // beat2: amount counts up + rows
+    const np=seg(local,b1+0.2,1.6,eio);
+    q(".ins-n").textContent=(Math.round(30000*np)).toLocaleString("en-US");
+    const shine=seg(local,b1+1.2,1.2,p=>p);
+    q(".shine").style.left=L(-160,600,shine)+"px";
+    [".r1",".r2"].forEach((sel,i)=>{
+      const p=seg(local,b1+0.8+i*0.4,0.5,back);
+      A(q(sel),seg(local,b1+0.8+i*0.4,0.3),{y:L(40,0,p)});
+    });
+    const fp2=seg(local,b1+1.9,0.5);
+    A(q(".insfoot"),fp2,{y:L(20,0,fp2)});
+    const rp=seg(local,b1+2.2,0.5);
+    A(q(".regbtn"),rp,{y:L(30,0,rp)});
+    // beat3: nothing flashy — no "instant coverage" claims
+  };
+})();
+
+/* ============================================================ OUT scene */
+(function(){
+  const sc=E("section","scene");sc.id="sc-out";
+  sc.append(E("div","o-head",T.out.head));
+  sc.append(E("div","o-sub",T.out.sub));
+  const steps=E("div","steps");
+  const mk=(n,t,dd,extra)=>{const c=E("div","stepcard");
+    c.append(E("div","n",n),(()=>{const w=E("div");
+      w.append(E("div","s-t",t),E("div","s-d",dd));
+      if(extra)w.append(E("div","ussd",extra));
+      return w;})());
+    return c;};
+  steps.append(
+    mk("1",T.out.s1t,T.out.s1d,T.out.ussd),
+    mk("2",T.out.s2t,T.out.s2d),
+    mk("3",T.out.s3t,T.out.s3d),
+  );
+  sc.append(steps);
+  sc.append(E("div","o-price",`${T.out.price} <small>· ${T.out.price2}</small>`));
+  sc.append(E("div","o-close",`<span class="grad">${T.out.close1}</span><br>${T.out.close2}`));
+  sc.append(E("div","o-vo",T.out.vo));
+  sc.append(E("div","o-fine",T.out.fine));
+  stage.append(sc);
+  sc._anim=(local,D)=>{
+    A(sc.querySelector(".o-head"),seg(local,0.1,0.5),{y:L(24,0,seg(local,0.1,0.5))});
+    A(sc.querySelector(".o-sub"),seg(local,0.35,0.5));
+    sc.querySelectorAll(".stepcard").forEach((c,i)=>{
+      const p=seg(local,0.7+i*1.0,0.6,back);
+      A(c,seg(local,0.7+i*1.0,0.4),{y:L(70,0,p),s:L(0.96,1,p)});
+    });
+    A(sc.querySelector(".o-price"),seg(local,4.0,0.5),{y:L(24,0,seg(local,4.0,0.5))});
+    A(sc.querySelector(".o-close"),seg(local,4.6,0.6),{y:L(24,0,seg(local,4.6,0.6))});
+    A(sc.querySelector(".o-vo"),seg(local,5.4,0.6));
+    A(sc.querySelector(".o-fine"),seg(local,5.4,0.6));
+    // gentle pulse on USSD
+    const u=sc.querySelector(".ussd");
+    if(local>2&&local<D-1)tf(u,{s:L(1,1.04,pulse(local,0.7))});else tf(u,{s:1});
+  };
+})();
+
+/* progress bar overlay */
+const prog=E("div");prog.id="progress";prog.append(E("div","fill"));stage.append(prog);
+
+/* ============================================================ SEEK */
+const sceneEls=SCENES.map(s=>({...s,el:document.getElementById("sc-"+s.id)}));
+window.TOTAL=TOTAL;
+window.SCENES=SCENES;
+window.seek=function(t){
+  t=Math.max(0,Math.min(TOTAL,t));
+  sceneEls.forEach((s,i)=>{
+    const el=s.el;
+    const D=s.end-s.start;
+    const visible=t>=s.start-0.05&&t<=s.end+FADE+0.05;
+    if(!visible){sh(el,0);return;}
+    el.style.zIndex=10+i;
+    const aIn=i===0?1:seg(t,s.start,FADE);
+    const alpha=t>s.end+FADE?0:aIn;
+    sh(el,alpha);
+    const local=Math.max(0,Math.min(D,t-s.start));
+    if(el._anim)el._anim.call(el,local,D);
+    if(!el._anim&&el.__animFn)el.__animFn(local,D);
+  });
+  prog.querySelector(".fill").style.width=(t/TOTAL*100)+"%";
+};
+/* scene anim fns were attached as sc._anim */
+sceneEls.forEach(s=>{s.el._anim=s.el._anim||null;});
+
+/* fit long Thai titles to one line (after fonts load) */
+document.fonts.ready.then(()=>{
+  document.querySelectorAll(".t-th").forEach(el=>{
+    let fs=66;
+    while(el.scrollWidth>el.clientWidth&&fs>42){fs-=2;el.style.fontSize=fs+"px";}
+  });
+});
+
+/* preview mode: open index.html#play in a browser */
+if(location.hash==="#play"){
+  const t0=performance.now();
+  (function loop(){
+    const t=((performance.now()-t0)/1000)%TOTAL;
+    window.seek(t);
+    requestAnimationFrame(loop);
+  })();
+}else{
+  window.seek(0);
+}
+</script>
+</body>
+</html>
